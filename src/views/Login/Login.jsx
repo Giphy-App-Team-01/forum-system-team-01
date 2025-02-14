@@ -20,9 +20,7 @@ const Login = () => {
     try {
       setLoading(true);
       await loginUser(formData.email, formData.password);
-      toast.success("✅ Login successful! Redirecting...", { position: "top-right", autoClose: 2000 });
-
-      setTimeout(() => navigate("/"), 2000);
+      navigate("/")
     } catch (err) {
       handleAuthError(err.code);
     } finally {

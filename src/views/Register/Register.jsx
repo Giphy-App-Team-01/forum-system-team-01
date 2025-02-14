@@ -110,15 +110,7 @@ const Register = () => {
         profilePictureURL
       );
 
-      toast.success(
-        'Registration successful! You will be redirected to home.',
-        {
-          position: 'top-right',
-          autoClose: 3000,
-        }
-      );
-
-      setTimeout(() => navigate('/'), 1000);
+    navigate('/')
     } catch (err) {
       toast.error(err.message, {
         position: 'top-right',
