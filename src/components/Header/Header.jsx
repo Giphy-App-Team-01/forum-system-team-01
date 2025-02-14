@@ -66,7 +66,7 @@ function Header() {
           <div className="utils-header">
             {dbUser?.isAdmin && <SearchForm />}
             <div className="action-buttons">
-              <Link to="/user/" className="nav-link">
+              <Link to={`/user/${authUser.uid}`} className="nav-link">
                 <div className="icon-box user-box">
                   <i className="fa-solid fa-user"></i>
                 </div>
