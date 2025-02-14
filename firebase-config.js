@@ -1,7 +1,7 @@
 // Import Firebase SDK functions needed for authentication, database, and app initialization
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getDatabase } from "firebase/database";
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
 
 // Firebase configuration using environment variables
 const firebaseConfig = {
@@ -11,9 +11,8 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
 };
-
 
 // Initialize Firebase with the provided configuration
 const app = initializeApp(firebaseConfig);
