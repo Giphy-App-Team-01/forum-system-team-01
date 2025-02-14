@@ -1,0 +1,26 @@
+.search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #1e1e1e; /* Dark theme */
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.search-bar__input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #333;
+  outline: none;
+}
+
+.search-bar__input::placeholder {
+  color: #bbb;
+}

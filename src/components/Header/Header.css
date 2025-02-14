@@ -11,6 +11,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 3rem;
 }
 
 /* Forum Title */
@@ -47,35 +48,29 @@
   gap: 10px;
 }
 
-/* Login Button */
-.login-button {
-  background: #2d2d2d;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s;
+.icon-box {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.65rem;
+}
+.user-box i {
+  font-size: 1.8rem;
 }
 
-.login-button:hover {
-  background: #f7df1e;
-  color: black;
+.header .container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
 }
-
-/* Register Button */
-.register-button {
-  background: #f7df1e;
-  color: black;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.register-button:hover {
-  background: #ffdd44;
+.utils-header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2rem;
 }
 
 /* Responsive Design */

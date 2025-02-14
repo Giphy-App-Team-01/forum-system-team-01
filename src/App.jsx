@@ -17,7 +17,7 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
-      <Container>
+      <Container extraClassName='page-content'>
         <Routes>
           <Route index element={<Home />} />
           <Route path='/all-posts/' element={<AllPosts />} />

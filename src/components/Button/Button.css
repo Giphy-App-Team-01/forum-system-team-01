@@ -1,0 +1,50 @@
+/* Base button style */
+button {
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Primary Button */
+button.primary {
+  background-color: #facc15; /* JavaScript yellow */
+  color: #222;
+}
+
+button.primary:hover {
+  background-color: #eab308;
+  transform: translateY(-2px);
+}
+
+button.primary:active {
+  background-color: #f0a500; /* Slightly darker yellow */
+  transform: translateY(0);
+}
+
+/* Secondary Button (default style for 'button' without a specific class) */
+button.secondary {
+  background-color: #333;
+  color: #fff;
+}
+
+button.secondary:hover {
+  background-color: #444;
+  transform: translateY(-2px);
+}
+
+button.secondary:active {
+  background-color: #555;
+  transform: translateY(0);
+}
+
+/* Disabled button */
+button:disabled {
+  background-color: #aaa;
+  color: #444;
+  cursor: not-allowed;
+}
