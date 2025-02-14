@@ -1,11 +1,18 @@
 import StatsBar from '../StatsBar/StatsBar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../Button/Button';
 import './Header.css';
 import Container from '../Container/Container';
 import SearchForm from '../SearchForm/SearchForm';
 
 function Header() {
+
+  const navigate = useNavigate()
+
+  const navigateRegister = () => {
+    navigate('/register/')
+  }
+
   return (
     <>
       <header className='header'>
@@ -54,7 +61,7 @@ function Header() {
               </Button>
               <Button
                 className='secondary register-button'
-                onClickHandler={() => {}}
+                onClickHandler={navigateRegister}
               >
                 Register
               </Button>
