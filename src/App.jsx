@@ -22,7 +22,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path='/all-posts/' element={<AllPosts />} />
           <Route path='/create-post/' element={<CreatePost />} />
-          <Route path='/post/:postId' element={<PostSingleView />} />
+          <Route path='/post/:postId' element={<PostSingleView id={4} />} />
           <Route path='/user/:userId/' element={<UserProfile />} />
           <Route path='/about/' element={<About />} />
           <Route path='/login/' element={<Login />} />

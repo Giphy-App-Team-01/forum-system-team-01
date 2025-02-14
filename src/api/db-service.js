@@ -27,7 +27,7 @@ export const saveUserToDatabase = async (
       lastName,
       email,
       username,
-      profilePicture: profilePictureURL, 
+      profilePicture: profilePictureURL,
       isBlocked: false,
       isAdmin: false,
     });
@@ -57,7 +57,6 @@ export const getUserProfilePicture = async (uid) => {
   }
 };
 
-
 /**
  * Fetches all user emails from the database.
  *
@@ -71,7 +70,7 @@ export const getAllUserEmails = async () => {
     const snapshot = await get(ref(db, 'users'));
 
     console.log(snapshot.val());
-    
+
     if (snapshot.exists()) {
       const users = snapshot.val();
       const emails = Object.values(users).map((user) => user.email);
@@ -81,5 +80,25 @@ export const getAllUserEmails = async () => {
   } catch (error) {
     console.error('Error fetching user emails:', error);
     return [];
+  }
+};
+
+export const getSinglePostDetails = async (id) => {
+  try {
+    const mockObject = {
+      id,
+      userId: 'userId1',
+      title: 'Best Crypto to Invest in 2024',
+      content: 'I think BTC and ETH will dominate...',
+      createdAt: 1707836480000,
+      updatedAt: 1707836580000,
+      likes: 15,
+      dislikes: 2,
+      commentCount: 1,
+    };
+    return mockObject;
+  } catch (err) {
+    console.log(err);
+    return {};
   }
 };
