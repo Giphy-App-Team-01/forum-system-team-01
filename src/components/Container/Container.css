@@ -1,0 +1,4 @@
+.container {
+  width: var(--global-site-width);
+  margin: 0 auto;
+}
