@@ -48,3 +48,8 @@ button:disabled {
   color: #444;
   cursor: not-allowed;
 }
+
+.logout-button {
+  background-color: #dc3545;
+  color: #fff;
+}

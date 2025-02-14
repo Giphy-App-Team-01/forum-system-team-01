@@ -102,3 +102,23 @@ export const getSinglePostDetails = async (id) => {
     return {};
   }
 };
+
+
+/**
+ * Fetches user data from the database.
+ *
+ * @param {string} uid - The unique identifier of the user.
+ * @returns {Promise<Object|null>} A promise that resolves to the user data object if it exists, or null if it does not exist or an error occurs.
+ */
+export const getUserData = async (uid) => {
+  try {
+    const snapshot = await get(ref(db, `users/${uid}`));
+    if (snapshot.exists()) {
+      return snapshot.val();
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
+  }
+};
