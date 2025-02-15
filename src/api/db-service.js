@@ -141,7 +141,7 @@ export const savePostToDatabase = async (userId, title, content) => {
 
     await set(postRef, {
       postId,
-      userId,
+      authorId: userId,
       title,
       content,
       createdAt: Date.now(),
