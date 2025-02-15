@@ -4,15 +4,21 @@ import { savePostToDatabase } from "../../api/db-service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./CreatePost.css";
+import { useNavigate } from "react-router-dom";
 
 const CreatePost = () => {
   const { authUser, dbUser } = useContext(AppContext);
   const [formData, setFormData] = useState({ title: "", content: "" });
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const navigateToProfile = () => {
+    navigation(`/user/${authUser.uid}`);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,6 +55,7 @@ const CreatePost = () => {
             src={dbUser?.profilePicture}
             alt="User Avatar"
             className="user-avatar"
+            onClick={navigateToProfile}
           />
           <p className="user-name">{dbUser?.firstName} {dbUser?.lastName}</p>
         </div>

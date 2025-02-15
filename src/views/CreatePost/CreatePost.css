@@ -36,6 +36,7 @@
 .user-avatar {
   width: 60px;
   height: 60px;
+  cursor: pointer;
   border-radius: 50%;
   border: 3px solid #ffcc00;
   object-fit: cover;
