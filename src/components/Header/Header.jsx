@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { logoutUser } from '../../api/auth-service';
 
 function Header() {
-  const { authUser, dbUser } = useContext(AppContext);
+  const { authUser, dbUser, setAppState } = useContext(AppContext);
   const navigate = useNavigate();
 
   const navigateLogin = () => {
@@ -23,10 +23,23 @@ function Header() {
   const handleLogout = async () => {
     try {
       await logoutUser();
-      navigate('/');
+      // Update AppContext immediately to reflect logout and update UI
+      setAppState((prevState) => ({
+        ...prevState,
+        authUser: null, 
+        dbUser: null,   
+      }));
     } catch (error) {
       console.error('Logout failed:', error.message);
+      //If error occurs, update AppContext with null values and redirect to home
+      setAppState((prevState) => ({
+        ...prevState,
+        authUser: null, 
+        dbUser: null,
+      }));
     }
+
+    navigate('/'); 
   };
 
   return (

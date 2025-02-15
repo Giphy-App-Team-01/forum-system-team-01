@@ -17,52 +17,63 @@ import { useEffect, useState } from 'react';
 import { auth } from '../firebase-config';
 import { getUserData } from './api/db-service';
 import { AppContext } from './context/app.context';
+import Authenticated from './hoc/Authenticated';
 
 function App() {
 
   const [appState, setAppState] = useState({
     authUser: null, // From Firebase Authentication
     dbUser: null, // From Firestore Database
+    loading: true, // Flag for loading user data
   });
 
 
   const [user, loading, error] = useAuthState(auth);
 
-  // Update the app state when the user changes
-  useEffect(() => {
-    if (appState.authUser !== user) {
-      setAppState((prevState) => ({
-        ...prevState,
-        authUser: user,
-      }));
-    }
-  }, [user]);
+// ✅ Update the app state when the user changes
+useEffect(() => {
+  if (user && user.uid !== appState.authUser?.uid) {
+    setAppState((prevState) => ({
+      ...prevState,
+      authUser: user,
+    }));
+  } else if (!user) {
+    setAppState((prevState) => ({
+      ...prevState,
+      authUser: null,
+      dbUser: null, 
+    }));
+  }
+}, [user]);
 
-  // Fetch user data from the database when the user changes
+ // ✅ Update loading state separately
+ useEffect(() => {
+  setAppState((prevState) => ({
+    ...prevState,
+    loading,
+  }));
+}, [loading]);
+
+  // ✅ Fetch user data only after Firebase authentication is fully loaded
   useEffect(() => {
-    if (!user) {
-      setAppState((prevState) => ({
-        ...prevState,
-        dbUser: null, //if there is no user, we set the dbUser to null
-      }));
-      return;
-    }
-  
+    if (!user || loading) return; 
+
     getUserData(user.uid)
       .then((data) => {
         setAppState((prevState) => ({
           ...prevState,
-          dbUser: data, //if there is a user, we set the dbUser to the data we fetched
+          dbUser: data,
         }));
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
-  }, [user]);
+  }, [user, loading]);
 
 
-  //Waiting for the user to be loaded
-  if (loading) {
+
+  // Show loading spinner while loading user data
+  if (appState.loading) {
     return <div>Loading...</div>; // This will be replaced with a Loading component
   }
   
@@ -78,10 +89,10 @@ function App() {
       <Container extraClassName='page-content'>
         <Routes>
           <Route index element={<Home />} />
-          <Route path='/all-posts/' element={<AllPosts />} />
-          <Route path='/create-post/' element={<CreatePost />} />
-          <Route path='/post/:postId' element={<PostSingleView id={4} />} />
-          <Route path='/user/:userId/' element={<UserProfile />} />
+          <Route path='/all-posts/' element={<Authenticated><AllPosts /></Authenticated>} />
+          <Route path='/create-post/' element={<Authenticated><CreatePost /></Authenticated>} />
+          <Route path='/post/:postId' element={<Authenticated><PostSingleView id={4} /></Authenticated>} />
+          <Route path='/user/:userId/' element={<Authenticated><UserProfile /></Authenticated>} />
           <Route path='/about/' element={<About />} />
           <Route path='/login/' element={<Login />} />
           <Route path='/register/' element={<Register />} />
