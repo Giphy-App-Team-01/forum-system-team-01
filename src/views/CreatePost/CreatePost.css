@@ -6,7 +6,7 @@
 }
 
 .create-post-container {
-  width: 500px;
+  width: 800px;
   padding: 50px 70px;
   border-radius: 80px 15px;
   background: rgba(20, 20, 20, 0.95);
@@ -90,7 +90,7 @@ textarea:focus {
 }
 
 .create-post-container button {
-  width: 102%;
+  width: 100%;
   padding: 12px;
   background: linear-gradient(90deg, #ffcc00, #ff9900);
   color: white;
