@@ -1,4 +1,4 @@
-import { get, ref, set } from 'firebase/database';
+import { get, push, ref, set } from 'firebase/database';
 import { db } from '../../firebase-config';
 
 /**
@@ -120,5 +120,37 @@ export const getUserData = async (uid) => {
   } catch (error) {
     console.error("Error fetching user data:", error);
     return null;
+  }
+};
+
+
+/**
+ * Saves a post to the database.
+ *
+ * @param {string} userId - The ID of the user creating the post.
+ * @param {string} title - The title of the post.
+ * @param {string} content - The content of the post.
+ * @returns {Promise<void>} A promise that resolves when the post is saved.
+ * @throws Will throw an error if saving the post to the database fails.
+ */
+export const savePostToDatabase = async (userId, title, content) => {
+  try {
+    // Get a key for a new post.
+    const postRef = push(ref(db, "posts"));
+    const postId = postRef.key;
+
+    await set(postRef, {
+      postId,
+      userId,
+      title,
+      content,
+      createdAt: Date.now(),
+      likes:0,
+      dislikes:0,
+      commentCount:0,
+    });
+
+  } catch (error) {
+    console.error("❌ Error saving post to database:", error);
   }
 };
