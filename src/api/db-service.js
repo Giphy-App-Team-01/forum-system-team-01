@@ -85,24 +85,27 @@ export const getAllUserEmails = async () => {
 
 export const getSinglePostDetails = async (id) => {
   try {
-    const mockObject = {
-      id,
-      userId: 'userId1',
-      title: 'Best Crypto to Invest in 2024',
-      content: 'I think BTC and ETH will dominate...',
-      createdAt: 1707836480000,
-      updatedAt: 1707836580000,
-      likes: 15,
-      dislikes: 2,
-      commentCount: 1,
-    };
-    return mockObject;
+    console.log('Fetching post for ID:', id); // Check what ID is being passed
+    const snapshot = await get(ref(db, 'posts/' + id));
+    const data = snapshot.val();
+    return data;
   } catch (err) {
-    console.log(err);
-    return {};
+    console.error('Firebase fetch error:', err);
+    return null;
   }
 };
 
+export const getAllUsers = async () => {
+  try {
+    const snapshot = await get(ref(db, 'users'));
+    const data = snapshot.val();
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.error('Firebase fetch error:', err);
+    return null;
+  }
+};
 
 /**
  * Fetches user data from the database.
@@ -118,11 +121,10 @@ export const getUserData = async (uid) => {
     }
     return null;
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error('Error fetching user data:', error);
     return null;
   }
 };
-
 
 /**
  * Saves a post to the database.
@@ -136,7 +138,7 @@ export const getUserData = async (uid) => {
 export const savePostToDatabase = async (userId, title, content) => {
   try {
     // Get a key for a new post.
-    const postRef = push(ref(db, "posts"));
+    const postRef = push(ref(db, 'posts'));
     const postId = postRef.key;
 
     await set(postRef, {
@@ -145,13 +147,12 @@ export const savePostToDatabase = async (userId, title, content) => {
       title,
       content,
       createdAt: Date.now(),
-      likes:0,
-      dislikes:0,
-      commentCount:0,
+      likes: 0,
+      dislikes: 0,
+      commentCount: 0,
     });
-
   } catch (error) {
-    console.error("❌ Error saving post to database:", error);
+    console.error('❌ Error saving post to database:', error);
   }
 };
 
@@ -166,12 +167,16 @@ export const subscribeToStats = (callback) => {
   const postsRef = ref(db, 'posts');
 
   const unsubscribeUsers = onValue(usersRef, (snapshot) => {
-    const totalUsers = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+    const totalUsers = snapshot.exists()
+      ? Object.keys(snapshot.val()).length
+      : 0;
     callback((prev) => ({ ...prev, totalUsers }));
   });
 
   const unsubscribePosts = onValue(postsRef, (snapshot) => {
-    const totalPosts = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+    const totalPosts = snapshot.exists()
+      ? Object.keys(snapshot.val()).length
+      : 0;
     callback((prev) => ({ ...prev, totalPosts }));
   });
 

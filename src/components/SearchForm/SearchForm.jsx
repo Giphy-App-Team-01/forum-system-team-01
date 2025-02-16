@@ -1,4 +1,5 @@
 import Button from '../Button/Button';
+import { getAllUsers } from '../../api/db-service';
 import './SearchForm.css';
 
 function SearchForm() {
@@ -9,7 +10,14 @@ function SearchForm() {
         className='search-bar__input'
         placeholder='Search...'
       />
-      <Button className='search-bar__button secondary'>Search</Button>
+      <Button
+        className='search-bar__button secondary'
+        onClickHandler={() => {
+          getAllUsers();
+        }}
+      >
+        Search
+      </Button>
     </div>
   );
 }

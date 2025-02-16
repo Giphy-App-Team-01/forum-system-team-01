@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { saveUserToDatabase, getAllUserEmails } from '../../api/db-service';
 import { uploadImageToCloudinary } from '../../api/upload-service';
 import { registerUser } from '../../api/auth-service';
-import defaultAvatar from '../../assets/default-avatar.jpg';
+import defaultAvatar from '../../assets/images/default-avatar.jpg';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Register.css';
@@ -110,7 +110,7 @@ const Register = () => {
         profilePictureURL
       );
 
-    navigate('/')
+      navigate('/');
     } catch (err) {
       toast.error(err.message, {
         position: 'top-right',

@@ -15,20 +15,31 @@
 }
 
 /* Forum Title */
-.forum-title {
+.forum-logo {
   color: #f7df1e; /* JavaScript yellow */
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
   font-size: 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}
+.forum-logo img {
+  width: 25px;
+  border-radius: 5px;
 }
 
 /* Navigation Links */
 .nav-links {
   display: flex;
-  gap: 24px;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
   list-style: none;
   margin: 0;
   padding: 0;
+  gap: 20px;
 }
 
 .nav-link {

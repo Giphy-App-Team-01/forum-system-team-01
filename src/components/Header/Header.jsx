@@ -22,7 +22,6 @@ function Header() {
     return () => unsubscribe();
   }, []);
 
-
   const navigateLogin = () => {
     navigate('/login/');
   };
@@ -37,76 +36,89 @@ function Header() {
       // Update AppContext immediately to reflect logout and update UI
       setAppState((prevState) => ({
         ...prevState,
-        authUser: null, 
-        dbUser: null,   
+        authUser: null,
+        dbUser: null,
       }));
     } catch (error) {
       console.error('Logout failed:', error.message);
       //If error occurs, update AppContext with null values and redirect to home
       setAppState((prevState) => ({
         ...prevState,
-        authUser: null, 
+        authUser: null,
         dbUser: null,
       }));
     }
 
-    navigate('/'); 
+    navigate('/');
   };
 
   return (
     <>
-      <header className="header">
+      <header className='header'>
         <Container>
-          <nav className="nav">
-            <h1 className="forum-title">JS Dev Forum</h1>
-            <ul className="nav-links">
+          <nav className='nav'>
+            <Link to='/' className='nav-link'>
+              <div className='forum-logo'>
+                <img
+                  src='../../src/assets/images/js-logo.png'
+                  alt='JavaScript Logo'
+                  className='js-logo'
+                />
+                Dev Forum
+              </div>
+            </Link>
+            <ul className='nav-links'>
               <li>
-                <Link to="/" className="nav-link">
+                <Link to='/' className='nav-link'>
                   Home
                 </Link>
               </li>
-              <li>
-                {authUser && (
-                  <Link to="/all-posts/" className="nav-link">
+
+              {authUser && (
+                <li>
+                  <Link to='/all-posts/' className='nav-link'>
                     All Posts
                   </Link>
-                )}
-              </li>
-              <li>
-                {authUser && (
-                  <Link to="/create-post/" className="nav-link">
+                </li>
+              )}
+
+              {authUser && (
+                <li>
+                  <Link to='/create-post/' className='nav-link'>
                     Create Post
                   </Link>
-                )}
-              </li>
+                </li>
+              )}
+
               <li>
-                <Link to="/about/" className="nav-link">
+                <Link to='/about/' className='nav-link'>
                   About
                 </Link>
               </li>
-              <li></li>
             </ul>
           </nav>
-          <div className="utils-header">
+          <div className='utils-header'>
             {dbUser?.isAdmin && <SearchForm />}
-            <div className="action-buttons">
-              {authUser && <Link to={`/user/${authUser?.uid}`} className="nav-link">
-                <div className="icon-box user-box">
-                  <i className="fa-solid fa-user"></i>
-                </div>
-              </Link>}
+            <div className='action-buttons'>
+              {authUser && (
+                <Link to={`/user/${authUser?.uid}`} className='nav-link'>
+                  <div className='icon-box user-box'>
+                    <i className='fa-solid fa-user'></i>
+                  </div>
+                </Link>
+              )}
             </div>
-            <div className="auth-buttons">
+            <div className='auth-buttons'>
               {!authUser ? (
                 <>
                   <Button
-                    className="primary login-button"
+                    className='primary login-button'
                     onClickHandler={navigateLogin}
                   >
                     Login
                   </Button>
                   <Button
-                    className="secondary register-button"
+                    className='secondary register-button'
                     onClickHandler={navigateRegister}
                   >
                     Register
@@ -115,7 +127,7 @@ function Header() {
               ) : (
                 <>
                   <Button
-                    className="logout-button"
+                    className='logout-button'
                     onClickHandler={handleLogout}
                   >
                     Logout
@@ -126,7 +138,10 @@ function Header() {
           </div>
         </Container>
       </header>
-      <StatsBar totalRegisteredUsers={stats.totalUsers} totalPostsCreated={stats.totalPosts} />
+      <StatsBar
+        totalRegisteredUsers={stats.totalUsers}
+        totalPostsCreated={stats.totalPosts}
+      />
     </>
   );
 }
