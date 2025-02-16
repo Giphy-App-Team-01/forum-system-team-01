@@ -1,4 +1,4 @@
-import { get, push, ref, set } from 'firebase/database';
+import { get, onValue, push, ref, set } from 'firebase/database';
 import { db } from '../../firebase-config';
 
 /**
@@ -153,4 +153,30 @@ export const savePostToDatabase = async (userId, title, content) => {
   } catch (error) {
     console.error("❌ Error saving post to database:", error);
   }
+};
+
+/**
+ * Listens for changes in total users and total posts.
+ *
+ * @param {Function} callback - Function to update the state when data changes.
+ * @returns {Function} Unsubscribe function to detach the listener.
+ */
+export const subscribeToStats = (callback) => {
+  const usersRef = ref(db, 'users');
+  const postsRef = ref(db, 'posts');
+
+  const unsubscribeUsers = onValue(usersRef, (snapshot) => {
+    const totalUsers = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+    callback((prev) => ({ ...prev, totalUsers }));
+  });
+
+  const unsubscribePosts = onValue(postsRef, (snapshot) => {
+    const totalPosts = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+    callback((prev) => ({ ...prev, totalPosts }));
+  });
+
+  return () => {
+    unsubscribeUsers();
+    unsubscribePosts();
+  };
 };

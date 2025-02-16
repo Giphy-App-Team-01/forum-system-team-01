@@ -5,12 +5,23 @@ import './Header.css';
 import Container from '../Container/Container';
 import SearchForm from '../SearchForm/SearchForm';
 import { AppContext } from '../../context/app.context';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { logoutUser } from '../../api/auth-service';
+import { subscribeToStats } from '../../api/db-service';
 
 function Header() {
   const { authUser, dbUser, setAppState } = useContext(AppContext);
+  const [stats, setStats] = useState({ totalUsers: 0, totalPosts: 0 });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    //Listen for changes in total users and total posts
+    const unsubscribe = subscribeToStats(setStats);
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
 
   const navigateLogin = () => {
     navigate('/login/');
@@ -115,7 +126,7 @@ function Header() {
           </div>
         </Container>
       </header>
-      <StatsBar totalRegisteredUsers={0} totalPostsCreated={0} />
+      <StatsBar totalRegisteredUsers={stats.totalUsers} totalPostsCreated={stats.totalPosts} />
     </>
   );
 }
