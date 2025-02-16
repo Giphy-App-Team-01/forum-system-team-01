@@ -18,6 +18,7 @@ import { auth } from '../firebase-config';
 import { getUserData } from './api/db-service';
 import { AppContext } from './context/app.context';
 import Authenticated from './hoc/Authenticated';
+import Loading from './components/Loading/Loading';
 
 function App() {
 
@@ -74,7 +75,7 @@ useEffect(() => {
 
   // Show loading spinner while loading user data
   if (appState.loading) {
-    return <div>Loading...</div>; // This will be replaced with a Loading component
+    return <Loading />;
   }
   
   
