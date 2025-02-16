@@ -185,3 +185,32 @@ export const subscribeToStats = (callback) => {
     unsubscribePosts();
   };
 };
+
+
+/**
+ * Fetches all users from the database and filters them by username.
+ * @param {string} searchQuery - The username search term.
+ * @returns {Promise<Array>} - An array of matching users.
+ */
+export const searchUsersByUsername = async (searchQuery) => {
+  try {
+    const snapshot = await get(ref(db, 'users'));
+
+    if (!snapshot.exists()) {
+      return [];
+    }
+
+    const users = Object.entries(snapshot.val()).map(([uid, user]) => ({
+      uid,
+      ...user,
+    }));
+
+    const filteredUsers = users.filter((user) =>
+      user.username?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return filteredUsers;
+  } catch (error) {
+    return [];
+  }
+};
