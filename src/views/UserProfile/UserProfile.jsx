@@ -121,6 +121,7 @@ const UserProfile = () => {
                 <h2>
                   {user.firstName} {user.lastName}
                 </h2>
+                <p><strong>Username:</strong> {user.username}</p>
                 <p>{user.email}</p>
                 {authUser?.uid === id && (
                   <Button className="edit-button" onClickHandler={handleEdit}>

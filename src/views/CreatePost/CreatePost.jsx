@@ -57,7 +57,7 @@ const CreatePost = () => {
             className="user-avatar"
             onClick={navigateToProfile}
           />
-          <p className="user-name">{dbUser?.firstName} {dbUser?.lastName}</p>
+          <p className="user-name">{dbUser?.username}</p>
         </div>
 
         <form onSubmit={handleSubmit}>
