@@ -1,4 +1,15 @@
-import { get, onValue, push, ref, set } from 'firebase/database';
+import {
+  equalTo,
+  get,
+  onValue,
+  orderByChild,
+  push,
+  query,
+  ref,
+  remove,
+  set,
+  update,
+} from 'firebase/database';
 import { db } from '../../firebase-config';
 
 /**
@@ -186,7 +197,6 @@ export const subscribeToStats = (callback) => {
   };
 };
 
-
 /**
  * Fetches all users from the database and filters them by username.
  * @param {string} searchQuery - The username search term.
@@ -211,6 +221,194 @@ export const searchUsersByUsername = async (searchQuery) => {
 
     return filteredUsers;
   } catch (error) {
+    return [];
+  }
+};
+
+/**
+ * Fetches all posts created by a specific user.
+ *
+ * @param {string} userId - The ID of the user whose posts we want to fetch.
+ * @returns {Promise<Array>} - A promise that resolves to an array of post objects.
+ */
+export const getUserPosts = async (userId) => {
+  try {
+    const postsRef = ref(db, 'posts');
+    const userPostsQuery = query(
+      postsRef,
+      orderByChild('authorId'),
+      equalTo(userId)
+    );
+    const snapshot = await get(userPostsQuery);
+
+    if (!snapshot.exists()) {
+      return [];
+    }
+
+    const postsData = snapshot.val();
+    return Object.keys(postsData).map((key) => ({
+      postId: key,
+      ...postsData[key],
+    }));
+  } catch (error) {
+    console.error('❌ Error fetching user posts:', error);
+    return [];
+  }
+};
+
+/**
+ * Blocks or unblocks a user by updating their block status in the database.
+ *
+ * @param {string} userId - The ID of the user to block or unblock.
+ * @param {boolean} shouldBlock - A boolean indicating whether to block (true) or unblock (false) the user.
+ * @returns {Promise<void>} A promise that resolves when the block status has been updated.
+ * @throws Will throw an error if the update operation fails.
+ */
+export const blockUser = async (userId, shouldBlock) => {
+  try {
+    await update(ref(db, `users/${userId}`), {
+      isBlocked: shouldBlock,
+    });
+  } catch (error) {
+    console.error('❌ Error updating block status:', error);
+  }
+};
+
+
+/**
+ * Updates the user data in the database.
+ *
+ * @param {string} userId - The ID of the user to update.
+ * @param {Object} updatedData - The new data to update for the user.
+ * @returns {Promise<void>} A promise that resolves when the user data is updated.
+ * @throws Will throw an error if the update operation fails.
+ */
+export const updateUserData = async (userId, updatedData) => {
+  try {
+    await update(ref(db, `users/${userId}`), updatedData);
+    console.log(`✅ User ${userId} data updated successfully.`);
+  } catch (error) {
+    console.error('❌ Error updating user data:', error);
+  }
+};
+
+
+/**
+ * Updates the role of a user in the database.
+ *
+ * @param {string} userId - The ID of the user whose role is to be updated.
+ * @param {boolean} isAdmin - A boolean indicating whether the user should be an admin.
+ * @returns {Promise<void>} - A promise that resolves when the user role is updated.
+ * @throws {Error} - Throws an error if the update operation fails.
+ */
+export const updateUserRole = async (userId, isAdmin) => {
+  try {
+    await update(ref(db, `users/${userId}`), { isAdmin });
+  } catch (error) {
+    console.error('❌ Error updating user role:', error);
+  }
+};
+
+
+// ------------------------------------------------------------------------------------------------------------------
+
+// This is a test function to add comments to the database (for testing purposes)
+// when comment functionality is done in the app, this function will not be needed
+
+export const addTestComments = async (postId) => {
+  try {
+    const commentsRef = ref(db, 'comments');
+
+    const comment1Ref = push(commentsRef);
+    await set(comment1Ref, {
+      commentId: comment1Ref.key,
+      postId: postId,
+      authorId: '7TtAFO4lU4db1Li4q13WRPPJsQe2',
+      content: 'This is a test comment!',
+      createdAt: Date.now(),
+    });
+
+    const comment2Ref = push(commentsRef);
+    await set(comment2Ref, {
+      commentId: comment2Ref.key,
+      postId: postId,
+      authorId: '7TtAFO4lU4db1Li4q13WRPPJsQe2',
+      content: 'Another test comment!',
+      createdAt: Date.now(),
+    });
+
+    const comment3Ref = push(commentsRef);
+    await set(comment3Ref, {
+      commentId: comment3Ref.key,
+      postId: postId,
+      authorId: 'RRgxhYXiKuOseJuulddQ8LpqP3L2',
+      content: 'Yet another test comment!',
+      createdAt: Date.now(),
+    });
+
+    const comment4Ref = push(commentsRef);
+    await set(comment4Ref, {
+      commentId: comment2Ref.key,
+      postId: postId,
+      authorId: 'RRgxhYXiKuOseJuulddQ8LpqP3L2',
+      content: 'and another one!',
+      createdAt: Date.now(),
+    });
+
+    console.log('✅ Test comments added!');
+  } catch (error) {
+    console.error('❌ Error adding test comments:', error);
+  }
+};
+
+// addTestComments("-OJChTUdRARD0EcZyRQN");
+
+
+//------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Fetches comments made by a specific user along with the titles of the posts they commented on.
+ *
+ * @param {string} userId - The ID of the user whose comments are to be fetched.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of comments with post titles.
+ * Each comment object contains the original comment properties and an additional `postTitle` property.
+ *
+ * @throws Will return an empty array if an error occurs during fetching.
+ */
+export const getUserCommentsWithPostTitles = async (userId) => {
+  try {
+    const snapshot = await get(
+      query(ref(db, 'comments'), orderByChild('authorId'), equalTo(userId))
+    );
+
+    if (!snapshot.exists()) {
+      return [];
+    }
+
+    const comments = Object.values(snapshot.val());
+
+    const postIds = [...new Set(comments.map((comment) => comment.postId))];
+    const postTitles = {};
+
+    await Promise.all(
+      postIds.map(async (postId) => {
+        const postSnapshot = await get(ref(db, `posts/${postId}/title`));
+        if (postSnapshot.exists()) {
+          postTitles[postId] = postSnapshot.val();
+        } else {
+          postTitles[postId] = 'Unknown Post';
+        }
+      })
+    );
+
+    const commentsWithPostTitles = comments.map((comment) => ({
+      ...comment,
+      postTitle: postTitles[comment.postId] || 'Unknown Post',
+    }));
+
+    return commentsWithPostTitles;
+  } catch (error) {
+    console.error('❌ Error fetching user comments with post titles:', error);
     return [];
   }
 };

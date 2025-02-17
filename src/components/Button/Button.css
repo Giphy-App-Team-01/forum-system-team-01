@@ -70,3 +70,116 @@ button:disabled {
   background: #333;
   transform: scale(1.05);
 }
+
+/* (Admin/Remove Admin) button */
+
+.admin-button {
+  padding: 10px 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+
+.make-admin {
+  background-color: #28a745;
+  color: white;
+}
+
+.make-admin:hover {
+  background-color: #218838;
+}
+
+
+.remove-admin {
+  background-color: #dc3545;
+  color: white;
+}
+
+.remove-admin:hover {
+  background-color: #c82333;
+}
+
+/* (Block/Unblock) button */
+
+.block-button {
+  padding: 10px 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+
+.block-user {
+  background-color: #dc3545; 
+  color: white;
+}
+
+.block-user:hover {
+  background-color: #c82333;
+}
+
+.unblock-user {
+  background-color: #28a745;
+  color: white;
+}
+
+.unblock-user:hover {
+  background-color: #218838;
+}
+
+
+/* Edit button */
+
+.edit-button {
+  background: linear-gradient(90deg, #ffcc00, #ff9900);
+  color: white;
+}
+
+.edit-button:hover {
+  background: linear-gradient(90deg, #ff9900, #ffcc00);
+  transform: scale(1.05);
+}
+
+/* Save button (at editing) */
+
+.save-button {
+  background: linear-gradient(90deg, #00cc66, #009944);
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.save-button:hover {
+  background: linear-gradient(90deg, #009944, #00cc66);
+
+}
+
+/* Posts and Comments buttons (Profile) */
+
+.profile-tabs button {
+  background: transparent;
+  border: 2px solid #ffcc00;
+  color: #ffcc00;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.profile-tabs button:hover,
+.profile-tabs button.active {
+  background: #ffcc00;
+  color: #000;
+}
+
