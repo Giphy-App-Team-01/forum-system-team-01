@@ -6,7 +6,6 @@ import {
   push,
   query,
   ref,
-  remove,
   set,
   update,
 } from 'firebase/database';
@@ -221,6 +220,7 @@ export const searchUsersByUsername = async (searchQuery) => {
 
     return filteredUsers;
   } catch (error) {
+    console.error('❌ Error fetching users:', error);
     return [];
   }
 };
@@ -274,7 +274,6 @@ export const blockUser = async (userId, shouldBlock) => {
   }
 };
 
-
 /**
  * Updates the user data in the database.
  *
@@ -292,7 +291,6 @@ export const updateUserData = async (userId, updatedData) => {
   }
 };
 
-
 /**
  * Updates the role of a user in the database.
  *
@@ -308,7 +306,6 @@ export const updateUserRole = async (userId, isAdmin) => {
     console.error('❌ Error updating user role:', error);
   }
 };
-
 
 // ------------------------------------------------------------------------------------------------------------------
 
@@ -362,7 +359,6 @@ export const addTestComments = async (postId) => {
 };
 
 // addTestComments("-OJChTUdRARD0EcZyRQN");
-
 
 //------------------------------------------------------------------------------------------------------------------
 

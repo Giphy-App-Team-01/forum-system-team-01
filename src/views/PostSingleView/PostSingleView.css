@@ -1,0 +1,12 @@
+.author-info__single-post {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+img.author-info__single-post {
+  width: 50px;
+}
+.date-created__single-post {
+  margin-left: auto;
+}

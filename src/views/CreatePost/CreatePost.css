@@ -60,7 +60,7 @@
 }
 
 .create-post-container input,
-textarea {
+.create-post-container textarea {
   width: 97%;
   padding: 12px;
   border-radius: 8px;

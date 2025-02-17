@@ -49,6 +49,42 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Success Button */
+
+button.success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+button.success:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+/* Warning Button */
+
+button.warning {
+  background-color: #f0a500; /* Slightly darker yellow */
+  color: #222;
+}
+
+button.warning:hover {
+  background-color: #eab308;
+  transform: translateY(-2px);
+}
+
+/* Danger Button */
+
+button.danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+button.danger:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
 .logout-button {
   background-color: #dc3545;
   color: #fff;
@@ -57,8 +93,8 @@ button:disabled {
 /* Search button */
 .search-button {
   padding: 10px 15px;
-  background: #3a3838; 
-  color: #fff; 
+  background: #3a3838;
+  color: #fff;
   font-weight: bold;
   border: none;
   border-radius: 5px;
@@ -82,7 +118,6 @@ button:disabled {
   transition: all 0.3s ease-in-out;
 }
 
-
 .make-admin {
   background-color: #28a745;
   color: white;
@@ -91,7 +126,6 @@ button:disabled {
 .make-admin:hover {
   background-color: #218838;
 }
-
 
 .remove-admin {
   background-color: #dc3545;
@@ -113,9 +147,8 @@ button:disabled {
   transition: all 0.3s ease-in-out;
 }
 
-
 .block-user {
-  background-color: #dc3545; 
+  background-color: #dc3545;
   color: white;
 }
 
@@ -131,7 +164,6 @@ button:disabled {
 .unblock-user:hover {
   background-color: #218838;
 }
-
 
 /* Edit button */
 
@@ -160,7 +192,6 @@ button:disabled {
 
 .save-button:hover {
   background: linear-gradient(90deg, #009944, #00cc66);
-
 }
 
 /* Posts and Comments buttons (Profile) */
@@ -182,4 +213,3 @@ button:disabled {
   background: #ffcc00;
   color: #000;
 }
-
