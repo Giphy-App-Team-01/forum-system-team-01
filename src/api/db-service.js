@@ -39,8 +39,8 @@ export const saveUserToDatabase = async (
       email,
       username,
       profilePicture: profilePictureURL,
-      isBlocked: false,
-      isAdmin: false,
+      // isBlocked: false,
+      // isAdmin: false,
     });
   } catch (error) {
     console.error('Error saving user to database:', error);

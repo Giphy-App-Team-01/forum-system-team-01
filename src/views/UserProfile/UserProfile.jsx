@@ -63,16 +63,17 @@ const UserProfile = () => {
   };
 
   const handleBlockUser = async () => {
-    const newStatus = !user.isBlocked;
+    const newStatus = user.isBlocked ? null : true;
     await blockUser(id, newStatus);
     setUser((prev) => ({ ...prev, isBlocked: newStatus }));
   };
-
+  
   const handleToggleAdmin = async () => {
-    const newStatus = !user.isAdmin;
+    const newStatus = user.isAdmin ? null : true;
     await updateUserRole(id, newStatus);
     setUser((prev) => ({ ...prev, isAdmin: newStatus }));
   };
+  
 
   // Filtering posts by search query
   const filteredPosts = posts.filter((post) =>
