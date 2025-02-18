@@ -213,3 +213,46 @@ button.danger:hover {
   background: #ffcc00;
   color: #000;
 }
+
+/* Reset and Back buttons (Forgot Password) */
+
+.reset-btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #28a745, #218838);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.reset-btn:hover {
+  background: linear-gradient(90deg, #218838, #28a745);
+  transform: scale(1.05);
+}
+
+.back-btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-btn:hover {
+  background: linear-gradient(90deg, #c82333, #dc3545);
+  transform: scale(1.05);
+}
+
+

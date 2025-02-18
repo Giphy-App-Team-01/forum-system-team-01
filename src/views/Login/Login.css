@@ -1,94 +1,96 @@
+.login-wrapper {
+  height: 65vh;
+}
 
 .login-container {
-    width: 450px;
-    margin: 80px auto;
-    padding: 40px;
-    border-radius: 12px;
-    background: #ffffff;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    text-align: center;
-  }
-  
-  .login-container h2 {
-    margin-bottom: 25px;
-    color: #333;
-    font-size: 28px;
-  }
-  
-  .login-container form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .login-container input {
-    width: 94%;
-    padding: 14px;
-    margin: 5px 0;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    font-size: 18px;
-    transition: border-color 0.3s;
-  }
-  
-  .login-container input:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  
-  .login-container form button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 15px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .login-container form button:hover {
-    background-color: #0056b3;
-  }
-  
-  .login-container form button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  .forgot-password {
-    margin-top: 15px;
-  }
-  
-  .forgot-password a {
-    color: #007bff;
-    font-size: 16px;
-    text-decoration: none;
-  }
-  
-  .forgot-password a:hover {
-    text-decoration: underline;
-  }
-  
-  .register-link {
-    margin-top: 20px;
-  }
-  
-  .register-link p {
-    font-size: 16px;
-  }
-  
-  .register-link a {
-    color: #007bff;
-    font-weight: bold;
-    font-size: 16px;
-    text-decoration: none;
-  }
-  
-  .register-link a:hover {
-    text-decoration: underline;
-  }
-  
+  width: 450px;
+  margin: 80px auto;
+  padding: 40px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.login-container h2 {
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 28px;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-container input {
+  width: 94%;
+  padding: 14px;
+  margin: 5px 0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 18px;
+  transition: border-color 0.3s;
+}
+
+.login-container input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.login-container form button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-container form button:hover {
+  background-color: #0056b3;
+}
+
+.login-container form button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.forgot-password {
+  margin-top: 15px;
+}
+
+.forgot-password a {
+  color: #007bff;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.register-link {
+  margin-top: 20px;
+}
+
+.register-link p {
+  font-size: 16px;
+}
+
+.register-link a {
+  color: #007bff;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
