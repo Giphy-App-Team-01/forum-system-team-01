@@ -72,3 +72,16 @@ textarea.content-textarea__single-post.editable {
   border: 2px dashed #ccc;
   border-radius: 4px;
 }
+.edit-post-box {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+.content-chars-length {
+  position: absolute;
+  bottom: 10px;
+  right: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}

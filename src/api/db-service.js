@@ -8,6 +8,7 @@ import {
   ref,
   set,
   update,
+  remove,
 } from 'firebase/database';
 import { db } from '../../firebase-config';
 
@@ -406,5 +407,21 @@ export const getUserCommentsWithPostTitles = async (userId) => {
   } catch (error) {
     console.error('❌ Error fetching user comments with post titles:', error);
     return [];
+  }
+};
+
+export const updatePostInfo = (postId, newContent) => {
+  try {
+    update(ref(db, `posts/${postId}`), { content: newContent });
+  } catch (error) {
+    console.error('❌ Error updating post info:', error);
+  }
+};
+
+export const deletePostById = async (postId) => {
+  try {
+    await remove(ref(db, `posts/${postId}`));
+  } catch (error) {
+    console.error('❌ Error deleting post:', error);
   }
 };

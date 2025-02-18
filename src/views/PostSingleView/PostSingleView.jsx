@@ -3,16 +3,23 @@ import {
   getUserProfilePicture,
   getUserData,
   getSinglePostDetails,
+  updatePostInfo,
+  deletePostById,
 } from '../../api/db-service';
+import { MIN_CONTENT_CHARS, MAX_CONTENT_CHARS } from '../../common/constants';
+import { validatePostContent } from '../../utils/validationHelpers';
 import Button from '../../components/Button/Button';
 import { formatTimestamp } from '../../utils/utils';
 import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/app.context';
 import PropTypes from 'prop-types';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function PostSingleView() {
   const navigate = useNavigate();
   const [postObject, setPostObject] = useState(null);
+  const [postContentLength, setPostContentLength] = useState(0);
   const [userProfilePicture, setUserProfilePicture] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [currentUsername, setCurrentUsername] = useState('');
@@ -27,6 +34,40 @@ function PostSingleView() {
     navigate(`/user/${postObject.authorId}`);
   };
 
+  const handlePostDelete = async () => {
+    const isConfirmed = window.confirm(
+      'Are you sure you want to delete this post?'
+    );
+
+    if (isConfirmed) {
+      try {
+        await deletePostById(id);
+        toast.success('✅ Post deleted!');
+        navigate(`/user/${authUser.uid}`);
+      } catch (error) {
+        toast.error('❌ Error deleting post');
+        console.error('Error deleting post:', error);
+      }
+    }
+  };
+
+  const handleUpdatePost = async () => {
+    try {
+      if (!validatePostContent(postContentValue)) {
+        toast.error(
+          `Content must be at least ${MIN_CONTENT_CHARS} characters long.`
+        );
+        return;
+      }
+      await updatePostInfo(id, postContentValue);
+      setIsEditable(false);
+      toast.success('Post updated successfully!');
+    } catch (error) {
+      toast.error('Error updating post.');
+      console.error('Error updating post:', error);
+    }
+  };
+
   useEffect(() => {
     if (!id) return;
 
@@ -39,6 +80,7 @@ function PostSingleView() {
         setPostObject(postInfo);
         setUserProfilePicture(postAuthorImage);
         setPostContentValue(postInfo.content);
+        setPostContentLength(postInfo.content.length);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
@@ -46,9 +88,11 @@ function PostSingleView() {
 
     fetchSinglePostInfo();
   }, [id]);
+
   return (
     postObject && (
       <article className='single-post'>
+        <ToastContainer />
         <h1>{postObject.title}</h1>
         <div className='author-info__single-post'>
           <div
@@ -71,11 +115,20 @@ function PostSingleView() {
         </div>
         <div className='content__single-post'>
           {isEditable && (
-            <textarea
-              className='content-textarea__single-post editable'
-              value={postContentValue}
-              onChange={(e) => setPostContentValue(e.target.value)}
-            ></textarea>
+            <div className='edit-post-box'>
+              <textarea
+                className='content-textarea__single-post editable'
+                value={postContentValue}
+                onChange={(e) => {
+                  setPostContentValue(e.target.value);
+                  setPostContentLength(e.target.value.length);
+                }}
+                maxLength={MAX_CONTENT_CHARS}
+              ></textarea>
+              <span className='content-chars-length'>
+                {postContentLength} / {MAX_CONTENT_CHARS}
+              </span>
+            </div>
           )}
           {!isEditable && (
             <textarea
@@ -93,14 +146,24 @@ function PostSingleView() {
               </Button>
             )}
             {dbUser.isAdmin && !isEditable && (
-              <Button className='danger' onClickHandler={() => {}}>
+              <Button className='danger' onClickHandler={handlePostDelete}>
                 Delete
               </Button>
             )}
             {isEditable && (
-              <Button className='success' onClickHandler={() => {}}>
-                Save Changes
-              </Button>
+              <>
+                <Button className='success' onClickHandler={handleUpdatePost}>
+                  Save Changes
+                </Button>
+                <Button
+                  className='danger'
+                  onClickHandler={() => {
+                    setIsEditable(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </>
             )}
           </div>
           <div className='public__controls'>
