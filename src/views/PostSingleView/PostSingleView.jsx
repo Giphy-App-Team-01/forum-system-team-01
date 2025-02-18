@@ -1,5 +1,9 @@
 import './PostSingleView.css';
-import { getSinglePostDetails } from '../../api/db-service';
+import {
+  getUserProfilePicture,
+  getUserData,
+  getSinglePostDetails,
+} from '../../api/db-service';
 import Button from '../../components/Button/Button';
 import { formatTimestamp } from '../../utils/utils';
 import { useEffect, useState, useContext } from 'react';
@@ -9,10 +13,16 @@ import PropTypes from 'prop-types';
 function PostSingleView() {
   const navigate = useNavigate();
   const [postObject, setPostObject] = useState(null);
+  const [userProfilePicture, setUserProfilePicture] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
+  const [currentUsername, setCurrentUsername] = useState('');
+  const [postContentValue, setPostContentValue] = useState('');
   const { id } = useParams();
   const { authUser, dbUser } = useContext(AppContext);
 
+  const handleEditClick = () => {
+    setIsEditable(true);
+  };
   const handleUsernameClick = () => {
     navigate(`/user/${postObject.authorId}`);
   };
@@ -23,7 +33,12 @@ function PostSingleView() {
     const fetchSinglePostInfo = async () => {
       try {
         const postInfo = await getSinglePostDetails(id);
+        const postAuthorImage = await getUserProfilePicture(postInfo.authorId);
+        const currentUserName = await getUserData(postInfo.authorId);
+        setCurrentUsername(currentUserName);
         setPostObject(postInfo);
+        setUserProfilePicture(postAuthorImage);
+        setPostContentValue(postInfo.content);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
@@ -31,7 +46,6 @@ function PostSingleView() {
 
     fetchSinglePostInfo();
   }, [id]);
-  console.log(postObject);
   return (
     postObject && (
       <article className='single-post'>
@@ -42,11 +56,13 @@ function PostSingleView() {
             onClick={handleUsernameClick}
           >
             <img
-              src='../../src/assets/images/default-avatar.jpg'
+              src={userProfilePicture}
               alt={postObject.authorId}
               className='author-info__single-post'
             />
-            <div className='username__single-post'>{postObject.authorId}</div>
+            <div className='username__single-post'>
+              {currentUsername?.username}
+            </div>
           </div>
 
           <div className='date-created__single-post'>
@@ -54,28 +70,54 @@ function PostSingleView() {
           </div>
         </div>
         <div className='content__single-post'>
-          <textarea
-            disabled
-            className='content-textarea__single-post'
-            value={postObject.content}
-          />
+          {isEditable && (
+            <textarea
+              className='content-textarea__single-post editable'
+              value={postContentValue}
+              onChange={(e) => setPostContentValue(e.target.value)}
+            ></textarea>
+          )}
+          {!isEditable && (
+            <textarea
+              disabled={!isEditable}
+              className='content-textarea__single-post'
+              value={postContentValue}
+            />
+          )}
         </div>
         <div className='controls__single-post'>
-          {authUser.uid === postObject.authorId && (
-            <Button className='warning' onClickHandler={() => {}}>
-              Edit
-            </Button>
-          )}
-          {dbUser.isAdmin && (
-            <Button className='danger' onClickHandler={() => {}}>
-              Delete
-            </Button>
-          )}
-          {isEditable && (
-            <Button className='success' onClickHandler={() => {}}>
-              Save Changes
-            </Button>
-          )}
+          <div className='author-admin__controls'>
+            {authUser.uid === postObject.authorId && !isEditable && (
+              <Button className='warning' onClickHandler={handleEditClick}>
+                Edit
+              </Button>
+            )}
+            {dbUser.isAdmin && !isEditable && (
+              <Button className='danger' onClickHandler={() => {}}>
+                Delete
+              </Button>
+            )}
+            {isEditable && (
+              <Button className='success' onClickHandler={() => {}}>
+                Save Changes
+              </Button>
+            )}
+          </div>
+          <div className='public__controls'>
+            <div className='vote-controls'>
+              <div className='option__vote-controls'>
+                <i className='fa-solid fa-thumbs-up'></i>
+                <span>0</span>
+              </div>
+              <div className='option__vote-controls'>
+                <i className='fa-solid fa-thumbs-down'></i>
+                <span>0</span>
+              </div>
+            </div>
+            <div className='reply-button'>
+              <Button onClickHandler={() => {}}>Reply</Button>
+            </div>
+          </div>
         </div>
       </article>
     )
