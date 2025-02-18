@@ -1,0 +1,32 @@
+.blocked-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #222, #000);
+    color: white;
+    text-align: center;
+  }
+  
+  .blocked-card {
+    background: rgba(255, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    border: 2px solid rgba(255, 0, 0, 0.8);
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .blocked-card h1 {
+    color: #ff4c4c;
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+  .blocked-card p {
+    font-size: 16px;
+    color: #ddd;
+    margin-bottom: 5px;
+  }
+  

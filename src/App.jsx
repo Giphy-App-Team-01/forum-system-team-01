@@ -14,11 +14,13 @@ import Login from './views/Login/Login';
 import Register from './views/Register/Register';
 import ForgotPassword from './views/ForgotPassword/ForgotPassword';
 import { useEffect, useState } from 'react';
-import { auth } from '../firebase-config';
+import { auth, db } from '../firebase-config';
 import { getUserData } from './api/db-service';
 import { AppContext } from './context/app.context';
 import Authenticated from './hoc/Authenticated';
 import Loading from './components/Loading/Loading';
+import { onValue, ref } from 'firebase/database';
+import CheckBlocked from './hoc/CheckBlocked';
 
 function App() {
   const [appState, setAppState] = useState({
@@ -53,20 +55,22 @@ function App() {
     }));
   }, [loading]);
 
-  // ✅ Fetch user data only after Firebase authentication is fully loaded
+  // ✅ Fetch user data only after Firebase authentication is fully loaded + onValue listener for real-time updates
   useEffect(() => {
     if (!user || loading) return;
 
-    getUserData(user.uid)
-      .then((data) => {
+    const userRef = ref(db, `users/${user.uid}`);
+
+    const unsubscribe = onValue(userRef, (snapshot) => {
+      if (snapshot.exists()) {
         setAppState((prevState) => ({
           ...prevState,
-          dbUser: data,
+          dbUser: snapshot.val(),
         }));
-      })
-      .catch((error) => {
-        console.error('Error fetching user data:', error);
-      });
+      }
+    });
+
+    return () => unsubscribe(); // Detach the listener
   }, [user, loading]);
 
   // Show loading spinner while loading user data
@@ -81,6 +85,7 @@ function App() {
   return (
     <AppContext.Provider value={{ ...appState, setAppState }}>
       <BrowserRouter>
+      <CheckBlocked>
         <Header />
         <Container extraClassName='page-content'>
           <Routes>
@@ -125,6 +130,7 @@ function App() {
           </Routes>
         </Container>
         <Footer />
+        </CheckBlocked>
       </BrowserRouter>
     </AppContext.Provider>
   );
