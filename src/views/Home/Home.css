@@ -1,0 +1,72 @@
+.homepage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.homepage-sections {
+  display: flex;
+  gap: 20px;
+  width: 90%;
+  max-width: 1200px;
+}
+
+.homepage-block {
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.homepage-block:hover {
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px);
+}
+
+.homepage-block h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.homepage-card {
+  background: rgba(183, 183, 181, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.homepage-card:hover {
+  background: rgba(255, 204, 0, 0.2);
+  transform: scale(1.02);
+}
+
+.homepage-card h3 {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.homepage-card p {
+  font-size: 14px;
+  color: #666;
+}
+
+.homepage-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 10px;
+  color: #888;
+}
+
+.most-commented-card,
+.newest-post-card {
+  border-left: 4px solid #ffcc00;
+}

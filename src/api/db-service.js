@@ -9,6 +9,7 @@ import {
   set,
   update,
   remove,
+  limitToLast,
 } from 'firebase/database';
 import { db } from '../../firebase-config';
 
@@ -321,7 +322,7 @@ export const addTestComments = async (postId) => {
     await set(comment1Ref, {
       commentId: comment1Ref.key,
       postId: postId,
-      authorId: '7TtAFO4lU4db1Li4q13WRPPJsQe2',
+      authorId: 'njeYEkHiXJZ170VPUgKOreC5Uem2',
       content: 'This is a test comment!',
       createdAt: Date.now(),
     });
@@ -330,7 +331,7 @@ export const addTestComments = async (postId) => {
     await set(comment2Ref, {
       commentId: comment2Ref.key,
       postId: postId,
-      authorId: '7TtAFO4lU4db1Li4q13WRPPJsQe2',
+      authorId: 'njeYEkHiXJZ170VPUgKOreC5Uem2',
       content: 'Another test comment!',
       createdAt: Date.now(),
     });
@@ -359,7 +360,7 @@ export const addTestComments = async (postId) => {
   }
 };
 
-// addTestComments("-OJChTUdRARD0EcZyRQN");
+// addTestComments("-OJSDlWRfv3tpyBgkNi3");
 
 //------------------------------------------------------------------------------------------------------------------
 
@@ -424,4 +425,55 @@ export const deletePostById = async (postId) => {
   } catch (error) {
     console.error('❌ Error deleting post:', error);
   }
+};
+
+/**
+ * Listens to the top commented posts in the database and invokes the callback with the sorted posts array.
+ *
+ * @param {function} callback - The callback function to be invoked with the sorted posts array.
+ * @returns {function} - The unsubscribe function to stop listening to the changes.
+ */
+export const listenToTopCommentedPosts = (callback) => {
+  const topCommentedQuery = query(ref(db, "posts"), orderByChild("commentCount"), limitToLast(10));
+  const unsubscribe = onValue(topCommentedQuery, (snapshot) => {
+    if (snapshot.exists()) {
+      const postsArray = Object.entries(snapshot.val()).map(([key, value]) => ({
+        postId: key,
+        ...value,
+      }));
+      postsArray.sort((a, b) => b.commentCount - a.commentCount); // sort by comment count in descending order
+      callback(postsArray);
+    } else {
+      callback([]);
+    }
+  });
+
+  return unsubscribe; //unsubscribe function
+};
+
+
+/**
+ * Listens to the latest posts from the database and invokes the callback with the posts data.
+ *
+ * @param {function} callback - The callback function to be invoked with the latest posts data.
+ * The callback receives an array of post objects, each containing a `postId` and other post properties.
+ * The posts are ordered by their creation date in ascending order.
+ * 
+ * @returns {function} - A function to unsubscribe from the database listener.
+ */
+export const listenToLatestPosts = (callback) => {
+  const latestQuery = query(ref(db, "posts"), orderByChild("createdAt"), limitToLast(10));
+  const unsubscribe = onValue(latestQuery, (snapshot) => {
+    if (snapshot.exists()) {
+      const postsArray = Object.entries(snapshot.val()).map(([key, value]) => ({
+        postId: key,
+        ...value,
+      }));
+      callback(postsArray.reverse()); // reverse() for ascending order
+    } else {
+      callback([]);
+    }
+  });
+
+  return unsubscribe; // unsubscribe function
 };
