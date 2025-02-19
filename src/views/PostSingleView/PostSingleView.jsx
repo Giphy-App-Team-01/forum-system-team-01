@@ -5,8 +5,11 @@ import {
   getSinglePostDetails,
   updatePostInfo,
   deletePostById,
+  fetchRelatedCommentsByPostId,
 } from '../../api/db-service';
+import SingleListCommentItem from '../../components/SingleListCommentItem/SingleListCommentItem';
 import { MIN_CONTENT_CHARS, MAX_CONTENT_CHARS } from '../../common/constants';
+import CommentForm from '../../components/CommentForm/CommentForm';
 import { validatePostContent } from '../../utils/validationHelpers';
 import Button from '../../components/Button/Button';
 import { formatTimestamp } from '../../utils/utils';
@@ -24,6 +27,8 @@ function PostSingleView() {
   const [isEditable, setIsEditable] = useState(false);
   const [currentUsername, setCurrentUsername] = useState('');
   const [postContentValue, setPostContentValue] = useState('');
+  const [postComments, setPostComments] = useState([]);
+  const [showCommentForm, setShowCommentForm] = useState(false);
   const { id } = useParams();
   const { authUser, dbUser } = useContext(AppContext);
 
@@ -76,11 +81,13 @@ function PostSingleView() {
         const postInfo = await getSinglePostDetails(id);
         const postAuthorImage = await getUserProfilePicture(postInfo.authorId);
         const currentUserName = await getUserData(postInfo.authorId);
+        const comments = await fetchRelatedCommentsByPostId(id);
         setCurrentUsername(currentUserName);
         setPostObject(postInfo);
         setUserProfilePicture(postAuthorImage);
         setPostContentValue(postInfo.content);
         setPostContentLength(postInfo.content.length);
+        setPostComments(comments);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
@@ -91,98 +98,115 @@ function PostSingleView() {
 
   return (
     postObject && (
-      <article className='single-post'>
-        <ToastContainer />
-        <h1>{postObject.title}</h1>
-        <div className='author-info__single-post'>
-          <div
-            className='username-info__single-post'
-            onClick={handleUsernameClick}
-          >
-            <img
-              src={userProfilePicture}
-              alt={postObject.authorId}
-              className='author-info__single-post'
-            />
-            <div className='username__single-post'>
-              {currentUsername?.username}
+      <>
+        <article className='single-post'>
+          <ToastContainer />
+          <h1>{postObject.title}</h1>
+          <div className='author-info__single-post'>
+            <div
+              className='username-info__single-post'
+              onClick={handleUsernameClick}
+            >
+              <img
+                src={userProfilePicture}
+                alt={postObject.authorId}
+                className='author-info__single-post'
+              />
+              <div className='username__single-post'>
+                {currentUsername?.username}
+              </div>
             </div>
-          </div>
 
-          <div className='date-created__single-post'>
-            {formatTimestamp(postObject.createdAt)}
-          </div>
-        </div>
-        <div className='content__single-post'>
-          {isEditable && (
-            <div className='edit-post-box'>
-              <textarea
-                className='content-textarea__single-post editable'
-                value={postContentValue}
-                onChange={(e) => {
-                  setPostContentValue(e.target.value);
-                  setPostContentLength(e.target.value.length);
-                }}
-                maxLength={MAX_CONTENT_CHARS}
-              ></textarea>
-              <span className='content-chars-length'>
-                {postContentLength} / {MAX_CONTENT_CHARS}
-              </span>
+            <div className='date-created__single-post'>
+              {formatTimestamp(postObject.createdAt)}
             </div>
-          )}
-          {!isEditable && (
-            <textarea
-              disabled={!isEditable}
-              className='content-textarea__single-post'
-              value={postContentValue}
-            />
-          )}
-        </div>
-        <div className='controls__single-post'>
-          <div className='author-admin__controls'>
-            {authUser.uid === postObject.authorId && !isEditable && (
-              <Button className='warning' onClickHandler={handleEditClick}>
-                Edit
-              </Button>
-            )}
-            {dbUser.isAdmin && !isEditable && (
-              <Button className='danger' onClickHandler={handlePostDelete}>
-                Delete
-              </Button>
-            )}
+          </div>
+          <div className='content__single-post'>
             {isEditable && (
-              <>
-                <Button className='success' onClickHandler={handleUpdatePost}>
-                  Save Changes
-                </Button>
-                <Button
-                  className='danger'
-                  onClickHandler={() => {
-                    setIsEditable(false);
+              <div className='edit-post-box'>
+                <textarea
+                  className='content-textarea__single-post editable'
+                  value={postContentValue}
+                  onChange={(e) => {
+                    setPostContentValue(e.target.value);
+                    setPostContentLength(e.target.value.length);
                   }}
-                >
-                  Cancel
-                </Button>
-              </>
+                  maxLength={MAX_CONTENT_CHARS}
+                ></textarea>
+                <span className='content-chars-length'>
+                  {postContentLength} / {MAX_CONTENT_CHARS}
+                </span>
+              </div>
+            )}
+            {!isEditable && (
+              <textarea
+                disabled={!isEditable}
+                className='content-textarea__single-post'
+                value={postContentValue}
+              />
             )}
           </div>
-          <div className='public__controls'>
-            <div className='vote-controls'>
-              <div className='option__vote-controls'>
-                <i className='fa-solid fa-thumbs-up'></i>
-                <span>0</span>
-              </div>
-              <div className='option__vote-controls'>
-                <i className='fa-solid fa-thumbs-down'></i>
-                <span>0</span>
-              </div>
+          <div className='controls__single-post'>
+            <div className='author-admin__controls'>
+              {authUser.uid === postObject.authorId && !isEditable && (
+                <Button className='warning' onClickHandler={handleEditClick}>
+                  Edit
+                </Button>
+              )}
+              {dbUser.isAdmin && !isEditable && (
+                <Button className='danger' onClickHandler={handlePostDelete}>
+                  Delete
+                </Button>
+              )}
+              {isEditable && (
+                <>
+                  <Button className='success' onClickHandler={handleUpdatePost}>
+                    Save Changes
+                  </Button>
+                  <Button
+                    className='danger'
+                    onClickHandler={() => {
+                      setIsEditable(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
             </div>
-            <div className='reply-button'>
-              <Button onClickHandler={() => {}}>Reply</Button>
+            <div className='public__controls'>
+              <div className='vote-controls'>
+                <div className='option__vote-controls'>
+                  <i className='fa-solid fa-thumbs-up'></i>
+                  <span>0</span>
+                </div>
+                <div className='option__vote-controls'>
+                  <i className='fa-solid fa-thumbs-down'></i>
+                  <span>0</span>
+                </div>
+              </div>
+              <div className='reply-button'>
+                <Button
+                  onClickHandler={() => setShowCommentForm((prev) => !prev)}
+                >
+                  Reply
+                </Button>
+              </div>
             </div>
           </div>
+        </article>
+
+        <div className='comments-section__single-post'>
+          <h3>Comments</h3>
+          <div className='comments-list'>
+            {postComments.map((comment) => (
+              <SingleListCommentItem key={comment.id} commentObject={comment} />
+            ))}
+          </div>
         </div>
-      </article>
+
+        {showCommentForm && <CommentForm postTitle={postObject.title} />}
+      </>
     )
   );
 }

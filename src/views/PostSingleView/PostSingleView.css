@@ -4,7 +4,8 @@
 .vote-controls,
 .option__vote-controls,
 .public__controls,
-.author-admin__controls {
+.author-admin__controls,
+.actions__comment-form {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
@@ -12,7 +13,8 @@
 }
 .username-info__single-post,
 .option__vote-controls,
-.author-admin__controls {
+.author-admin__controls,
+.actions__comment-form {
   gap: 10px;
 }
 .vote-controls,

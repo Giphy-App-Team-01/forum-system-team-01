@@ -1,0 +1,31 @@
+.comment-form {
+  position: fixed;
+  bottom: 0;
+  padding: 20px;
+  background-color: #fff;
+  width: var(--global-site-width);
+  border-top: 4px solid #ffcc00;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-flow: column nowrap;
+  border-radius: 10px 10px 0;
+}
+.comment-content-textarea {
+  display: flex;
+}
+h4.reply-to-post__comment-form {
+  margin: 0 0 20px 0;
+}
+.reply-to-post__comment-form span {
+  color: #666;
+}
+textarea#comment-form-textarea:focus {
+  border: 2px solid #ffcc00;
+}
+textarea#comment-form-textarea {
+  width: 100%;
+  border: 2px dashed #ccc;
+  padding: 10px;
+  min-height: 80px;
+  margin-bottom: 20px;
+}

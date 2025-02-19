@@ -434,7 +434,11 @@ export const deletePostById = async (postId) => {
  * @returns {function} - The unsubscribe function to stop listening to the changes.
  */
 export const listenToTopCommentedPosts = (callback) => {
-  const topCommentedQuery = query(ref(db, "posts"), orderByChild("commentCount"), limitToLast(10));
+  const topCommentedQuery = query(
+    ref(db, 'posts'),
+    orderByChild('commentCount'),
+    limitToLast(10)
+  );
   const unsubscribe = onValue(topCommentedQuery, (snapshot) => {
     if (snapshot.exists()) {
       const postsArray = Object.entries(snapshot.val()).map(([key, value]) => ({
@@ -451,18 +455,21 @@ export const listenToTopCommentedPosts = (callback) => {
   return unsubscribe; //unsubscribe function
 };
 
-
 /**
  * Listens to the latest posts from the database and invokes the callback with the posts data.
  *
  * @param {function} callback - The callback function to be invoked with the latest posts data.
  * The callback receives an array of post objects, each containing a `postId` and other post properties.
  * The posts are ordered by their creation date in ascending order.
- * 
+ *
  * @returns {function} - A function to unsubscribe from the database listener.
  */
 export const listenToLatestPosts = (callback) => {
-  const latestQuery = query(ref(db, "posts"), orderByChild("createdAt"), limitToLast(10));
+  const latestQuery = query(
+    ref(db, 'posts'),
+    orderByChild('createdAt'),
+    limitToLast(10)
+  );
   const unsubscribe = onValue(latestQuery, (snapshot) => {
     if (snapshot.exists()) {
       const postsArray = Object.entries(snapshot.val()).map(([key, value]) => ({
@@ -476,4 +483,45 @@ export const listenToLatestPosts = (callback) => {
   });
 
   return unsubscribe; // unsubscribe function
+};
+
+export const fetchRelatedCommentsByPostId = async (postId) => {
+  try {
+    if (!postId) throw new Error('postId is required');
+
+    const commentsRef = ref(db, 'comments');
+    const snapshot = await get(commentsRef);
+
+    if (snapshot.exists()) {
+      const allComments = snapshot.val();
+      const filteredComments = Object.entries(allComments)
+        .map(([id, data]) => ({ id, ...data }))
+        .filter((comment) => comment.postId === postId);
+
+      return filteredComments;
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.error('Error fetching comments:', err);
+    return [];
+  }
+};
+
+export const fetchDisplayNameByUserId = async (userId) => {
+  try {
+    if (!userId) throw new Error('userId is required');
+
+    const userRef = ref(db, 'users/' + userId);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      return snapshot.val().firstName + ' ' + snapshot.val().lastName || null;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.error('Error fetching username:', err);
+    return null;
+  }
 };

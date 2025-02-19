@@ -51,9 +51,6 @@ const UserProfile = () => {
     fetchUserData();
   }, [id]);
 
-  console.log(user);
-  
-
   const handleEdit = () => setEditing(true);
 
   const handleSave = async () => {
@@ -67,13 +64,12 @@ const UserProfile = () => {
     await blockUser(id, newStatus);
     setUser((prev) => ({ ...prev, isBlocked: newStatus }));
   };
-  
+
   const handleToggleAdmin = async () => {
     const newStatus = user.isAdmin ? null : true;
     await updateUserRole(id, newStatus);
     setUser((prev) => ({ ...prev, isAdmin: newStatus }));
   };
-  
 
   // Filtering posts by search query
   const filteredPosts = posts.filter((post) =>
@@ -88,32 +84,34 @@ const UserProfile = () => {
   //Sorting data (posts or comments) by date (newest or oldest)
   const sortedData = (data) =>
     data.sort((a, b) =>
-      sortOrder === 'newest' ? b.createdAt - a.createdAt : a.createdAt - b.createdAt
+      sortOrder === 'newest'
+        ? b.createdAt - a.createdAt
+        : a.createdAt - b.createdAt
     );
 
   return (
-    <div className="user-profile">
+    <div className='user-profile'>
       {user ? (
         <>
-          <div className="profile-header">
+          <div className='profile-header'>
             <img
               src={user.profilePicture || '/default-avatar.jpg'}
-              alt="Avatar"
-              className="profile-avatar"
+              alt='Avatar'
+              className='profile-avatar'
             />
             {editing ? (
               <>
                 <input
-                  type="text"
+                  type='text'
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
                 <input
-                  type="text"
+                  type='text'
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
-                <Button className="save-button" onClickHandler={handleSave}>
+                <Button className='save-button' onClickHandler={handleSave}>
                   Save
                 </Button>
               </>
@@ -122,10 +120,12 @@ const UserProfile = () => {
                 <h2>
                   {user.firstName} {user.lastName}
                 </h2>
-                <p><strong>Username:</strong> {user.username}</p>
+                <p>
+                  <strong>Username:</strong> {user.username}
+                </p>
                 <p>{user.email}</p>
                 {authUser?.uid === id && (
-                  <Button className="edit-button" onClickHandler={handleEdit}>
+                  <Button className='edit-button' onClickHandler={handleEdit}>
                     Edit
                   </Button>
                 )}
@@ -135,15 +135,23 @@ const UserProfile = () => {
 
           {/* Buttons for blocking and promoting users (this buttons are visible only for admins and is visible only for other users profile) */}
           {authUser?.uid !== id && (
-            <div className="profile-actions">
+            <div className='profile-actions'>
               <Button
-                className={user.isBlocked ? 'block-button unblock-user' : 'block-button block-user'}
+                className={
+                  user.isBlocked
+                    ? 'block-button unblock-user'
+                    : 'block-button block-user'
+                }
                 onClickHandler={handleBlockUser}
               >
                 {user.isBlocked ? 'Unblock User' : 'Block User'}
               </Button>
               <Button
-                className={user.isAdmin ? 'admin-button remove-admin' : 'admin-button make-admin'}
+                className={
+                  user.isAdmin
+                    ? 'admin-button remove-admin'
+                    : 'admin-button make-admin'
+                }
                 onClickHandler={handleToggleAdmin}
               >
                 {user.isAdmin ? 'Remove Admin' : 'Make Admin'}
@@ -152,7 +160,7 @@ const UserProfile = () => {
           )}
 
           {/* Навигация между постове и коментари */}
-          <div className="profile-tabs">
+          <div className='profile-tabs'>
             <Button
               className={activeTab === 'posts' ? 'active' : ''}
               onClickHandler={() => setActiveTab('posts')}
@@ -168,51 +176,54 @@ const UserProfile = () => {
           </div>
 
           {/* Search and sort controls */}
-          <div className="sort-controls">
+          <div className='sort-controls'>
             <input
-              type="text"
-              className="search-input"
-              placeholder="Search by title or comments..."
+              type='text'
+              className='search-input'
+              placeholder='Search by title or comments...'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
 
             <label>Sort by:</label>
-            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+            >
+              <option value='newest'>Newest</option>
+              <option value='oldest'>Oldest</option>
             </select>
           </div>
 
           {/* Show posts or comments */}
           {activeTab === 'comments' ? (
-            <div className="comments-list">
+            <div className='comments-list'>
               {filteredComments.length > 0 ? (
                 sortedData(filteredComments).map((comment) => (
                   <div
                     key={comment.commentId}
-                    className="comment-card"
+                    className='comment-card'
                     onClick={() => navigate(`/post/${comment.postId}`)}
                   >
-                    <h3 className="comment-post-title">
+                    <h3 className='comment-post-title'>
                       📝 <strong>{comment.postTitle || 'Unknown Post'}</strong>
                     </h3>
-                    <p className="comment-content">
+                    <p className='comment-content'>
                       <strong>Your comment:</strong> {comment.content}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="no-content">No comments found.</p>
+                <p className='no-content'>No comments found.</p>
               )}
             </div>
           ) : (
-            <div className="posts-list">
+            <div className='posts-list'>
               {filteredPosts.length > 0 ? (
                 sortedData(filteredPosts).map((post) => (
                   <div
                     key={post.postId}
-                    className="post-card"
+                    className='post-card'
                     onClick={() => navigate(`/post/${post.postId}`)}
                   >
                     <h3>{post.title}</h3>
@@ -220,7 +231,7 @@ const UserProfile = () => {
                   </div>
                 ))
               ) : (
-                <p className="no-content">No posts found.</p>
+                <p className='no-content'>No posts found.</p>
               )}
             </div>
           )}
