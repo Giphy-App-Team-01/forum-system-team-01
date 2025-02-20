@@ -168,19 +168,24 @@ button.danger:hover {
 /* Edit button */
 
 .edit-button {
-  background: linear-gradient(90deg, #ffcc00, #ff9900);
-  color: white;
+  background: linear-gradient(90deg, #e0e0e0, #cfcfcf);
+  color: #333;
+  font-weight: bold;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
 .edit-button:hover {
-  background: linear-gradient(90deg, #ff9900, #ffcc00);
+  background: linear-gradient(90deg, #cfcfcf, #bfbfbf);
   transform: scale(1.05);
 }
 
-/* Save button (at editing) */
-
+/*  Save button  */
 .save-button {
-  background: linear-gradient(90deg, #00cc66, #009944);
+  background: linear-gradient(90deg, #42ba96, #2d9c7f);
   color: white;
   font-weight: bold;
   padding: 10px 15px;
@@ -191,15 +196,14 @@ button.danger:hover {
 }
 
 .save-button:hover {
-  background: linear-gradient(90deg, #009944, #00cc66);
+  background: linear-gradient(90deg, #2d9c7f, #24936d); 
+  transform: scale(1.05);
 }
-
-/* Posts and Comments buttons (Profile) */
-
+/*  Posts and Comments tabs */
 .profile-tabs button {
   background: transparent;
-  border: 2px solid #ffcc00;
-  color: #ffcc00;
+  border: 2px solid #bdbdbd;
+  color: #555;
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
@@ -210,10 +214,10 @@ button.danger:hover {
 
 .profile-tabs button:hover,
 .profile-tabs button.active {
-  background: #ffcc00;
-  color: #000;
+  background: #e0e0e0;
+  color: #333;
+  box-shadow: 0px 4px 10px rgba(150, 150, 150, 0.3);
 }
-
 /* Reset and Back buttons (Forgot Password) */
 
 .reset-btn {

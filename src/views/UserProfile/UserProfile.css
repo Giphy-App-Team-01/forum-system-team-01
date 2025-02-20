@@ -2,16 +2,17 @@
   max-width: 1000px;
   margin: 40px auto;
   padding: 20px 40px;
-  background: rgba(20, 20, 20, 0.95);
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+  background: linear-gradient(135deg, #ffffff, #f5f7fa);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), 0 8px 20px rgba(0, 0, 0, 0.15);
   border-radius: 15px;
   text-align: center;
-  color: #fff;
-  transition: transform 0.2s ease-in-out;
+  color: #333;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .user-profile:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 10px 25px rgba(0, 0, 0, 0.18);
 }
 
 .profile-header {
@@ -31,7 +32,7 @@ p {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 3px solid #ffcc00;
+  border: 3px solid #949494;
   object-fit: cover;
   transition: transform 0.3s ease-in-out;
 }
@@ -39,20 +40,18 @@ p {
 .profile-header input {
   width: 30%;
   padding: 8px;
-  margin-top: 10px;
   font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ffcc00;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border-radius: 6px;
+  border: 1px solid #656565;
+  background: #ffffff;
+  color: #333;
   text-align: center;
-  transition: border-color 0.3sease-in-out;
+  transition: border-color 0.3s ease-in-out;
 }
 
 .profile-header input:focus {
-  border-color: #f8ab38;
   outline: none;
-  background: rgba(255, 255, 255, 0.2);
+  background: #f3f3f3;
 }
 
 .profile-actions {
@@ -84,7 +83,7 @@ p {
   border-radius: 6px;
   border: 1px solid #ffcc00;
   background: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: rgb(78, 77, 77);
   transition: border-color 0.3s ease-in-out;
 }
 
@@ -94,7 +93,6 @@ p {
 }
 
 .sort-controls input:focus {
-  border-color: #ff9900;
   outline: none;
 }
 
@@ -102,9 +100,9 @@ p {
   padding: 8px;
   font-size: 14px;
   border-radius: 6px;
-  border: 1px solid #ffcc00;
-  background: #333;
-  color: white;
+  border: 2px solid #ffcc00;
+  background: #ffffff;
+  color: #333;
   cursor: pointer;
 }
 
@@ -115,21 +113,23 @@ p {
 
 .post-card,
 .comment-card {
-  background: rgba(255, 255, 255, 0.1);
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   text-align: left;
-  padding: 15px;
   border-left: 4px solid #ffcc00;
+
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 .post-card:hover,
 .comment-card:hover {
-  background: rgba(255, 255, 255, 0.2);
   transform: scale(1.02);
+
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12),
+    0px 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .post-card h3 {
@@ -147,11 +147,11 @@ p {
 
 .comment-content {
   font-size: 14px;
-  color: #ddd;
+  color: #333;
 }
 
 .no-content {
   font-size: 16px;
-  color: #bbb;
+  color: #787878;
   margin-top: 20px;
 }
