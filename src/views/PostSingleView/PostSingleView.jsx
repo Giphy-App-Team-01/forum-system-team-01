@@ -5,7 +5,11 @@ import {
   getSinglePostDetails,
   updatePostInfo,
   deletePostById,
-  fetchRelatedCommentsByPostId,
+  updateCommentCount,
+  addCommentToPostById,
+  subscribeToComments,
+  deleteCommentById,
+  updateLikesDislikes,
 } from '../../api/db-service';
 import SingleListCommentItem from '../../components/SingleListCommentItem/SingleListCommentItem';
 import { MIN_CONTENT_CHARS, MAX_CONTENT_CHARS } from '../../common/constants';
@@ -23,11 +27,14 @@ function PostSingleView() {
   const navigate = useNavigate();
   const [postObject, setPostObject] = useState(null);
   const [postContentLength, setPostContentLength] = useState(0);
+  const [postLikes, setPostLikes] = useState(0);
+  const [postDislikes, setPostDislikes] = useState(0);
   const [userProfilePicture, setUserProfilePicture] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [currentUsername, setCurrentUsername] = useState('');
   const [postContentValue, setPostContentValue] = useState('');
   const [postComments, setPostComments] = useState([]);
+  const [commentContentValue, setCommentContentValue] = useState('');
   const [showCommentForm, setShowCommentForm] = useState(false);
   const { id } = useParams();
   const { authUser, dbUser } = useContext(AppContext);
@@ -37,6 +44,40 @@ function PostSingleView() {
   };
   const handleUsernameClick = () => {
     navigate(`/user/${postObject.authorId}`);
+  };
+
+  const handleLikesDislikesClick = (type) => {
+    // if (postObject.usersVoted[authUser.uid]) return;
+    if (type === 'likes') {
+      setPostLikes((prev) => {
+        const updatedLikes = prev + 1;
+        updateLikesDislikes(id, updatedLikes, postDislikes, authUser.uid, type); // Pass updated likes
+        return updatedLikes;
+      });
+    } else if (type === 'dislikes') {
+      setPostDislikes((prev) => {
+        const updatedDislikes = prev + 1;
+        updateLikesDislikes(id, postLikes, updatedDislikes, authUser.uid, type); // Pass updated dislikes
+        return updatedDislikes;
+      });
+    }
+  };
+
+  const handleAddNewComment = async () => {
+    try {
+      addCommentToPostById(
+        id,
+        authUser.uid,
+        commentContentValue,
+        new Date().getTime()
+      );
+      setShowCommentForm(false);
+      toast.success('Comment added successfully!');
+      setCommentContentValue('');
+    } catch (err) {
+      toast.error('Error adding comment.');
+      console.error('Error adding comment:', err);
+    }
   };
 
   const handlePostDelete = async () => {
@@ -73,28 +114,44 @@ function PostSingleView() {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteCommentById(commentId);
+      toast.success('Comment deleted successfully!');
+    } catch (error) {
+      toast.error('Error deleting comment.');
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   useEffect(() => {
     if (!id) return;
-
+    const unsubscribe = subscribeToComments(setPostComments);
     const fetchSinglePostInfo = async () => {
       try {
         const postInfo = await getSinglePostDetails(id);
         const postAuthorImage = await getUserProfilePicture(postInfo.authorId);
         const currentUserName = await getUserData(postInfo.authorId);
-        const comments = await fetchRelatedCommentsByPostId(id);
         setCurrentUsername(currentUserName);
         setPostObject(postInfo);
+        setPostLikes(postInfo.likes);
+        setPostDislikes(postInfo.dislikes);
         setUserProfilePicture(postAuthorImage);
         setPostContentValue(postInfo.content);
         setPostContentLength(postInfo.content.length);
-        setPostComments(comments);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
     };
-
     fetchSinglePostInfo();
+    return () => unsubscribe();
   }, [id]);
+
+  useEffect(() => {
+    updateCommentCount(id, postComments.length);
+  }, [postComments]);
+
+  console.log(postLikes, postDislikes);
 
   return (
     postObject && (
@@ -176,13 +233,19 @@ function PostSingleView() {
             </div>
             <div className='public__controls'>
               <div className='vote-controls'>
-                <div className='option__vote-controls'>
+                <div
+                  className='option__vote-controls'
+                  onClick={() => handleLikesDislikesClick('likes')}
+                >
                   <i className='fa-solid fa-thumbs-up'></i>
-                  <span>0</span>
+                  <span>{postLikes}</span>
                 </div>
-                <div className='option__vote-controls'>
+                <div
+                  className='option__vote-controls'
+                  onClick={() => handleLikesDislikesClick('dislikes')}
+                >
                   <i className='fa-solid fa-thumbs-down'></i>
-                  <span>0</span>
+                  <span>{postDislikes}</span>
                 </div>
               </div>
               <div className='reply-button'>
@@ -197,15 +260,38 @@ function PostSingleView() {
         </article>
 
         <div className='comments-section__single-post'>
-          <h3>Comments</h3>
+          <h3>{postComments.length} Comments</h3>
           <div className='comments-list'>
-            {postComments.map((comment) => (
-              <SingleListCommentItem key={comment.id} commentObject={comment} />
-            ))}
+            {postComments.map((comment) => {
+              if (authUser.uid === comment.authorId || dbUser?.isAdmin) {
+                return (
+                  <SingleListCommentItem
+                    key={comment.commentId}
+                    commentObject={comment}
+                    onDelete={() => handleDeleteComment(comment.commentId)}
+                  />
+                );
+              } else {
+                return (
+                  <SingleListCommentItem
+                    key={comment.commentId}
+                    commentObject={comment}
+                  />
+                );
+              }
+            })}
           </div>
         </div>
 
-        {showCommentForm && <CommentForm postTitle={postObject.title} />}
+        {showCommentForm && (
+          <CommentForm
+            postTitle={postObject.title}
+            saveHandler={handleAddNewComment}
+            cancelHandler={() => setShowCommentForm(false)}
+            commentFormValue={commentContentValue}
+            commentFormOnChangeHandler={setCommentContentValue}
+          />
+        )}
       </>
     )
   );

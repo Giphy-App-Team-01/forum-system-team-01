@@ -18,12 +18,10 @@ button.primary {
 
 button.primary:hover {
   background-color: #eab308;
-  transform: translateY(-2px);
 }
 
 button.primary:active {
   background-color: #f0a500; /* Slightly darker yellow */
-  transform: translateY(0);
 }
 
 /* Secondary Button (default style for 'button' without a specific class) */
@@ -34,12 +32,10 @@ button.secondary {
 
 button.secondary:hover {
   background-color: #444;
-  transform: translateY(-2px);
 }
 
 button.secondary:active {
   background-color: #555;
-  transform: translateY(0);
 }
 
 /* Disabled button */
@@ -58,7 +54,6 @@ button.success {
 
 button.success:hover {
   background-color: #218838;
-  transform: translateY(-2px);
 }
 
 /* Warning Button */
@@ -70,7 +65,6 @@ button.warning {
 
 button.warning:hover {
   background-color: #eab308;
-  transform: translateY(-2px);
 }
 
 /* Danger Button */
@@ -82,7 +76,6 @@ button.danger {
 
 button.danger:hover {
   background-color: #c82333;
-  transform: translateY(-2px);
 }
 
 .logout-button {
@@ -104,7 +97,6 @@ button.danger:hover {
 
 .search-button:hover {
   background: #333;
-  transform: scale(1.05);
 }
 
 /* (Admin/Remove Admin) button */
@@ -180,7 +172,6 @@ button.danger:hover {
 
 .edit-button:hover {
   background: linear-gradient(90deg, #cfcfcf, #bfbfbf);
-  transform: scale(1.05);
 }
 
 /*  Save button  */
@@ -196,8 +187,7 @@ button.danger:hover {
 }
 
 .save-button:hover {
-  background: linear-gradient(90deg, #2d9c7f, #24936d); 
-  transform: scale(1.05);
+  background: linear-gradient(90deg, #2d9c7f, #24936d);
 }
 /*  Posts and Comments tabs */
 .profile-tabs button {
@@ -235,7 +225,6 @@ button.danger:hover {
 
 .reset-btn:hover {
   background: linear-gradient(90deg, #218838, #28a745);
-  transform: scale(1.05);
 }
 
 .back-btn {
@@ -256,7 +245,4 @@ button.danger:hover {
 
 .back-btn:hover {
   background: linear-gradient(90deg, #c82333, #dc3545);
-  transform: scale(1.05);
 }
-
-

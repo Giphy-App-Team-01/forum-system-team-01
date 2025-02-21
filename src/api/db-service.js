@@ -525,3 +525,74 @@ export const fetchDisplayNameByUserId = async (userId) => {
     return null;
   }
 };
+
+export const addCommentToPostById = async (
+  postId,
+  authorId,
+  content,
+  createdAt
+) => {
+  try {
+    const commentsRef = ref(db, 'comments');
+    const commentRef = push(commentsRef);
+
+    await set(commentRef, {
+      commentId: commentRef.key,
+      postId,
+      authorId,
+      content,
+      createdAt,
+    });
+  } catch (err) {
+    console.error('Error adding comment:', err);
+  }
+};
+
+export const subscribeToComments = (callback) => {
+  const commentsRef = ref(db, 'comments');
+
+  const unsubscribeComments = onValue(commentsRef, (snapshot) => {
+    const totalComments = snapshot.exists()
+      ? Object.values(snapshot.val())
+      : [];
+    callback(totalComments);
+  });
+
+  return () => {
+    unsubscribeComments();
+  };
+};
+
+export const updateCommentCount = async (postId, commentCount) => {
+  try {
+    await update(ref(db, `posts/${postId}`), { commentCount });
+  } catch (error) {
+    console.error('❌ Error updating comment count:', error);
+  }
+};
+
+export const deleteCommentById = async (commentId) => {
+  try {
+    await remove(ref(db, `comments/${commentId}`));
+  } catch (error) {
+    console.error('❌ Error deleting comment:', error);
+  }
+};
+
+export const updateLikesDislikes = async (
+  postId,
+  likes,
+  dislikes,
+  userId,
+  type
+) => {
+  try {
+    await update(ref(db, `posts/${postId}`), {
+      likes,
+      dislikes,
+      usersVoted: { [userId]: type },
+    });
+  } catch (error) {
+    console.error('❌ Error updating likes/dislikes:', error);
+  }
+};

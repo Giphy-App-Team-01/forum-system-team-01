@@ -40,11 +40,11 @@
   cursor: pointer;
   margin-bottom: 10px;
   transition: all 0.3s ease-in-out;
+  position: relative;
 }
 
 .homepage-card:hover {
   background: rgba(255, 204, 0, 0.2);
-  transform: scale(1.02);
 }
 
 .homepage-card h3 {

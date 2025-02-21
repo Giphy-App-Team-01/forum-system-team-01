@@ -87,3 +87,9 @@ textarea.content-textarea__single-post.editable {
   font-weight: 600;
   color: #666;
 }
+button.delete-comment {
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: scale(0.7);
+}
