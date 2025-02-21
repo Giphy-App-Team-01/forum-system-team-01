@@ -548,19 +548,22 @@ export const addCommentToPostById = async (
   }
 };
 
-export const subscribeToComments = (callback) => {
-  const commentsRef = ref(db, 'comments');
+export const subscribeToComments = (postId, callback) => {
+  if (!postId) return () => {};
 
-  const unsubscribeComments = onValue(commentsRef, (snapshot) => {
-    const totalComments = snapshot.exists()
-      ? Object.values(snapshot.val())
-      : [];
-    callback(totalComments);
+  const commentsRef = ref(db, `comments`);
+
+  const unsubscribe = onValue(commentsRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const allComments = snapshot.val();
+      const filteredComments = Object.values(allComments).filter(comment => comment.postId === postId);
+      callback(filteredComments);
+    } else {
+      callback([]); 
+    }
   });
 
-  return () => {
-    unsubscribeComments();
-  };
+  return unsubscribe;
 };
 
 export const updateCommentCount = async (postId, commentCount) => {
@@ -579,20 +582,45 @@ export const deleteCommentById = async (commentId) => {
   }
 };
 
-export const updateLikesDislikes = async (
-  postId,
-  likes,
-  dislikes,
-  userId,
-  type
-) => {
+  
+export const updateLikesDislikes = async (postId, likes, dislikes, userId, type) => {
   try {
-    await update(ref(db, `posts/${postId}`), {
+    const postRef = ref(db, `posts/${postId}`);
+    const snapshot = await get(postRef);
+
+    if (!snapshot.exists()) return;
+
+    const postData = snapshot.val();
+    const usersVoted = postData.usersVoted || {}; 
+
+    if (usersVoted[userId] === type) {
+      return; 
+    }
+
+    usersVoted[userId] = type;
+
+    await update(postRef, {
       likes,
       dislikes,
-      usersVoted: { [userId]: type },
+      usersVoted,
     });
   } catch (error) {
-    console.error('❌ Error updating likes/dislikes:', error);
+    console.error("❌ Error updating likes/dislikes:", error);
   }
+};
+
+
+export const subscribeToPost = (postId, callback) => {
+  if (!postId) return () => {};
+
+  const postRef = ref(db, `posts/${postId}`);
+
+  const unsubscribe = onValue(postRef, async (snapshot) => {
+    if (snapshot.exists()) {
+      const postData = snapshot.val();
+      callback(postData); 
+    }
+  });
+
+  return unsubscribe; 
 };

@@ -10,6 +10,7 @@ import {
   subscribeToComments,
   deleteCommentById,
   updateLikesDislikes,
+  subscribeToPost,
 } from '../../api/db-service';
 import SingleListCommentItem from '../../components/SingleListCommentItem/SingleListCommentItem';
 import { MIN_CONTENT_CHARS, MAX_CONTENT_CHARS } from '../../common/constants';
@@ -36,6 +37,7 @@ function PostSingleView() {
   const [postComments, setPostComments] = useState([]);
   const [commentContentValue, setCommentContentValue] = useState('');
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [usersVoted, setUsersVoted] = useState({});
   const { id } = useParams();
   const { authUser, dbUser } = useContext(AppContext);
 
@@ -47,20 +49,44 @@ function PostSingleView() {
   };
 
   const handleLikesDislikesClick = (type) => {
-    // if (postObject.usersVoted[authUser.uid]) return;
-    if (type === 'likes') {
-      setPostLikes((prev) => {
-        const updatedLikes = prev + 1;
-        updateLikesDislikes(id, updatedLikes, postDislikes, authUser.uid, type); // Pass updated likes
-        return updatedLikes;
-      });
-    } else if (type === 'dislikes') {
-      setPostDislikes((prev) => {
-        const updatedDislikes = prev + 1;
-        updateLikesDislikes(id, postLikes, updatedDislikes, authUser.uid, type); // Pass updated dislikes
-        return updatedDislikes;
-      });
+    if (!authUser) return;
+  
+    const userVote = usersVoted[authUser.uid]; // Takes the user's vote
+  
+    let updatedLikes = postLikes;
+    let updatedDislikes = postDislikes;
+    let updatedUsersVoted = { ...usersVoted };
+  
+    if (userVote === type) {
+      // If we click on the same vote type, we remove the vote
+      if (type === "likes") {
+        updatedLikes -= 1;
+      } else if (type === "dislikes") {
+        updatedDislikes -= 1;
+      }
+  
+      delete updatedUsersVoted[authUser.uid]; // Remove the user's vote
+    } else {
+      // If we click on a different vote type, we update the vote
+      if (userVote === "likes") {
+        updatedLikes -= 1;
+      } else if (userVote === "dislikes") {
+        updatedDislikes -= 1;
+      }
+  
+      if (type === "likes") {
+        updatedLikes += 1;
+      } else {
+        updatedDislikes += 1;
+      }
+  
+      updatedUsersVoted[authUser.uid] = type; //Save the user's vote
     }
+  
+    setPostLikes(updatedLikes);
+    setPostDislikes(updatedDislikes);
+    setUsersVoted(updatedUsersVoted);
+    updateLikesDislikes(id, updatedLikes, updatedDislikes, authUser.uid, updatedUsersVoted[authUser.uid] || null);
   };
 
   const handleAddNewComment = async () => {
@@ -126,32 +152,37 @@ function PostSingleView() {
 
   useEffect(() => {
     if (!id) return;
-    const unsubscribe = subscribeToComments(setPostComments);
-    const fetchSinglePostInfo = async () => {
-      try {
-        const postInfo = await getSinglePostDetails(id);
-        const postAuthorImage = await getUserProfilePicture(postInfo.authorId);
-        const currentUserName = await getUserData(postInfo.authorId);
-        setCurrentUsername(currentUserName);
-        setPostObject(postInfo);
-        setPostLikes(postInfo.likes);
-        setPostDislikes(postInfo.dislikes);
-        setUserProfilePicture(postAuthorImage);
-        setPostContentValue(postInfo.content);
-        setPostContentLength(postInfo.content.length);
-      } catch (error) {
-        console.error('Error fetching post:', error);
-      }
+  
+    const handlePostUpdate = async (postData) => {
+      const postAuthorImage = await getUserProfilePicture(postData.authorId);
+      const currentUserName = await getUserData(postData.authorId);
+  
+      setPostObject(postData);
+      setPostLikes(postData.likes || 0);
+      setPostDislikes(postData.dislikes || 0);
+      setUsersVoted(postData.usersVoted || {});
+      setUserProfilePicture(postAuthorImage);
+      setCurrentUsername(currentUserName);
+      setPostContentValue(postData.content);
+      setPostContentLength(postData.content.length);
     };
-    fetchSinglePostInfo();
-    return () => unsubscribe();
+  
+    const unsubscribePost = subscribeToPost(id, handlePostUpdate);
+    const unsubscribeComments = subscribeToComments(id, (comments) => {
+      setPostComments(comments);
+    });
+  
+    return () => {
+      unsubscribePost();
+      unsubscribeComments();
+    };
   }, [id]);
 
   useEffect(() => {
     updateCommentCount(id, postComments.length);
   }, [postComments]);
 
-  console.log(postLikes, postDislikes);
+  console.log(postComments);
 
   return (
     postObject && (
@@ -232,19 +263,24 @@ function PostSingleView() {
               )}
             </div>
             <div className='public__controls'>
-              <div className='vote-controls'>
+            <div className="vote-controls">
                 <div
-                  className='option__vote-controls'
+                  className={`option__vote-controls ${
+                    usersVoted[authUser?.uid] === 'likes' ? 'voted' : ''
+                  }`}
                   onClick={() => handleLikesDislikesClick('likes')}
                 >
-                  <i className='fa-solid fa-thumbs-up'></i>
+                  <i className="fa-solid fa-thumbs-up"></i>
                   <span>{postLikes}</span>
                 </div>
+
                 <div
-                  className='option__vote-controls'
+                  className={`option__vote-controls ${
+                    usersVoted[authUser?.uid] === 'dislikes' ? 'voted' : ''
+                  }`}
                   onClick={() => handleLikesDislikesClick('dislikes')}
                 >
-                  <i className='fa-solid fa-thumbs-down'></i>
+                  <i className="fa-solid fa-thumbs-down"></i>
                   <span>{postDislikes}</span>
                 </div>
               </div>
