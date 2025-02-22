@@ -18,7 +18,7 @@ import CommentForm from '../../components/CommentForm/CommentForm';
 import { validatePostContent } from '../../utils/validationHelpers';
 import Button from '../../components/Button/Button';
 import { formatTimestamp } from '../../utils/utils';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/app.context';
 import PropTypes from 'prop-types';
@@ -38,6 +38,7 @@ function PostSingleView() {
   const [commentContentValue, setCommentContentValue] = useState('');
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [usersVoted, setUsersVoted] = useState({});
+  const postContentRef = useRef(null); // Референция към textarea
   const { id } = useParams();
   const { authUser, dbUser } = useContext(AppContext);
 
@@ -182,11 +183,21 @@ function PostSingleView() {
     updateCommentCount(id, postComments.length);
   }, [postComments]);
 
+  //Auto resize textarea height based on content length 
+  useEffect(() => {
+    if (postContentRef.current) {
+      postContentRef.current.style.height = "auto"; 
+      postContentRef.current.style.height = postContentRef.current.scrollHeight + "px"; 
+    }
+  }, [postContentValue,isEditable]);
+
+
   console.log(postComments);
 
   return (
     postObject && (
       <>
+      <div className="single-post-view-container">
         <article className='single-post'>
           <ToastContainer />
           <h1>{postObject.title}</h1>
@@ -213,6 +224,7 @@ function PostSingleView() {
             {isEditable && (
               <div className='edit-post-box'>
                 <textarea
+                ref={postContentRef}
                   className='content-textarea__single-post editable'
                   value={postContentValue}
                   onChange={(e) => {
@@ -228,6 +240,7 @@ function PostSingleView() {
             )}
             {!isEditable && (
               <textarea
+                ref={postContentRef}
                 disabled={!isEditable}
                 className='content-textarea__single-post'
                 value={postContentValue}
@@ -328,6 +341,7 @@ function PostSingleView() {
             commentFormOnChangeHandler={setCommentContentValue}
           />
         )}
+        </div>
       </>
     )
   );

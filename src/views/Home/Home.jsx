@@ -62,7 +62,7 @@ const Home = () => {
                 onClick={() => handlePostClick(post.postId)}
               >
                 <h3>{post.title}</h3>
-                <p>{post.content.substring(0, 100)}...</p>
+                <p>{post.content.substring(0, 70)}...</p>
                 <div className="homepage-footer">
                   <span>By {authorNames[post.authorId]}</span>
                   <span>💬 {post.commentCount} comments</span>
@@ -84,7 +84,7 @@ const Home = () => {
                 onClick={() => handlePostClick(post.postId)}
               >
                 <h3>{post.title}</h3>
-                <p>{post.content.substring(0, 100)}...</p>
+                <p>{post.content.substring(0, 70)}...</p>
                 <div className="homepage-footer">
                   <span>By {authorNames[post.authorId]}</span>
                   <span>📅 {new Date(post.createdAt).toLocaleDateString()}</span>

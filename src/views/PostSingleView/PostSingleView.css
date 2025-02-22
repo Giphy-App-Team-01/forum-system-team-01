@@ -99,3 +99,8 @@ button.delete-comment {
   color: rgb(245, 215, 160);
   font-weight: bold;
 }
+
+.single-post-view-container {
+  min-height: 750px;
+  max-height: auto;
+}
