@@ -209,7 +209,7 @@ const UserProfile = () => {
                       📝 <strong>{comment.postTitle || 'Unknown Post'}</strong>
                     </h3>
                     <p className='comment-content'>
-                      <strong>Your comment:</strong> {comment.content}
+                      <strong>Your comment:</strong> {comment.content.substring(0, 100)}...
                     </p>
                   </div>
                 ))
