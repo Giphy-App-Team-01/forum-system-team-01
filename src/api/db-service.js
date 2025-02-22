@@ -62,7 +62,7 @@ export const getUserProfilePicture = async (uid) => {
     const snapshot = await get(ref(db, `users/${uid}/profilePicture`));
     return snapshot.exists()
       ? snapshot.val()
-      : '../../assets/default-avatar.jpg';
+      : '../../assets/images/default-avatar.jpg';
   } catch (error) {
     console.error('Error fetching profile picture:', error);
     return null;
@@ -95,9 +95,14 @@ export const getAllUserEmails = async () => {
   }
 };
 
+/**
+ * Fetches the details of a single post from the database.
+ *
+ * @param {string} id - The unique identifier of the post.
+ * @returns {Promise<Object|null>} A promise that resolves to the post details object if successful, or null if an error occurs.
+ */
 export const getSinglePostDetails = async (id) => {
   try {
-    console.log('Fetching post for ID:', id); // Check what ID is being passed
     const snapshot = await get(ref(db, 'posts/' + id));
     const data = snapshot.val();
     return data;
@@ -107,6 +112,14 @@ export const getSinglePostDetails = async (id) => {
   }
 };
 
+/**
+ * Fetches all users from the Firebase database.
+ *
+ * @async
+ * @function getAllUsers
+ * @returns {Promise<Object|null>} A promise that resolves to an object containing user data, or null if an error occurs.
+ * @throws Will log an error message to the console if the fetch operation fails.
+ */
 export const getAllUsers = async () => {
   try {
     const snapshot = await get(ref(db, 'users'));
@@ -309,61 +322,6 @@ export const updateUserRole = async (userId, isAdmin) => {
   }
 };
 
-// ------------------------------------------------------------------------------------------------------------------
-
-// This is a test function to add comments to the database (for testing purposes)
-// when comment functionality is done in the app, this function will not be needed
-
-export const addTestComments = async (postId) => {
-  try {
-    const commentsRef = ref(db, 'comments');
-
-    const comment1Ref = push(commentsRef);
-    await set(comment1Ref, {
-      commentId: comment1Ref.key,
-      postId: postId,
-      authorId: 'njeYEkHiXJZ170VPUgKOreC5Uem2',
-      content: 'This is a test comment!',
-      createdAt: Date.now(),
-    });
-
-    const comment2Ref = push(commentsRef);
-    await set(comment2Ref, {
-      commentId: comment2Ref.key,
-      postId: postId,
-      authorId: 'njeYEkHiXJZ170VPUgKOreC5Uem2',
-      content: 'Another test comment!',
-      createdAt: Date.now(),
-    });
-
-    const comment3Ref = push(commentsRef);
-    await set(comment3Ref, {
-      commentId: comment3Ref.key,
-      postId: postId,
-      authorId: 'RRgxhYXiKuOseJuulddQ8LpqP3L2',
-      content: 'Yet another test comment!',
-      createdAt: Date.now(),
-    });
-
-    const comment4Ref = push(commentsRef);
-    await set(comment4Ref, {
-      commentId: comment2Ref.key,
-      postId: postId,
-      authorId: 'RRgxhYXiKuOseJuulddQ8LpqP3L2',
-      content: 'and another one!',
-      createdAt: Date.now(),
-    });
-
-    console.log('✅ Test comments added!');
-  } catch (error) {
-    console.error('❌ Error adding test comments:', error);
-  }
-};
-
-// addTestComments("-OJSDlWRfv3tpyBgkNi3");
-
-//------------------------------------------------------------------------------------------------------------------
-
 /**
  * Fetches comments made by a specific user along with the titles of the posts they commented on.
  *
@@ -411,6 +369,12 @@ export const getUserCommentsWithPostTitles = async (userId) => {
   }
 };
 
+/**
+ * Updates the content of a post in the database.
+ *
+ * @param {string} postId - The unique identifier of the post to update.
+ * @param {string} newContent - The new content to update the post with.
+ */
 export const updatePostInfo = (postId, newContent) => {
   try {
     update(ref(db, `posts/${postId}`), { content: newContent });
@@ -419,6 +383,13 @@ export const updatePostInfo = (postId, newContent) => {
   }
 };
 
+/**
+ * Deletes a post from the database by its ID.
+ *
+ * @param {string} postId - The ID of the post to delete.
+ * @returns {Promise<void>} A promise that resolves when the post is deleted.
+ * @throws Will log an error message if the deletion fails.
+ */
 export const deletePostById = async (postId) => {
   try {
     await remove(ref(db, `posts/${postId}`));
@@ -485,6 +456,13 @@ export const listenToLatestPosts = (callback) => {
   return unsubscribe; // unsubscribe function
 };
 
+/**
+ * Fetches related comments by post ID from the database.
+ *
+ * @param {string} postId - The ID of the post to fetch comments for.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of comment objects related to the given post ID.
+ * @throws {Error} If the postId is not provided.
+ */
 export const fetchRelatedCommentsByPostId = async (postId) => {
   try {
     if (!postId) throw new Error('postId is required');
@@ -508,6 +486,13 @@ export const fetchRelatedCommentsByPostId = async (postId) => {
   }
 };
 
+/**
+ * Fetches the display name of a user by their user ID.
+ *
+ * @param {string} userId - The ID of the user whose display name is to be fetched.
+ * @returns {Promise<string|null>} A promise that resolves to the user's display name (first name and last name) or null if the user does not exist or an error occurs.
+ * @throws {Error} Throws an error if the userId is not provided.
+ */
 export const fetchDisplayNameByUserId = async (userId) => {
   try {
     if (!userId) throw new Error('userId is required');
@@ -526,6 +511,15 @@ export const fetchDisplayNameByUserId = async (userId) => {
   }
 };
 
+/**
+ * Adds a comment to a post by its ID.
+ *
+ * @param {string} postId - The ID of the post to which the comment will be added.
+ * @param {string} authorId - The ID of the author of the comment.
+ * @param {string} content - The content of the comment.
+ * @param {Date} createdAt - The date and time when the comment was created.
+ * @returns {Promise<void>} A promise that resolves when the comment has been added.
+ */
 export const addCommentToPostById = async (
   postId,
   authorId,
@@ -548,6 +542,13 @@ export const addCommentToPostById = async (
   }
 };
 
+/**
+ * Subscribes to comments for a specific post and invokes a callback with the filtered comments.
+ *
+ * @param {string} postId - The ID of the post to subscribe to comments for.
+ * @param {function} callback - The callback function to be invoked with the filtered comments.
+ * @returns {function} - A function to unsubscribe from the comments updates.
+ */
 export const subscribeToComments = (postId, callback) => {
   if (!postId) return () => {};
 
@@ -566,6 +567,14 @@ export const subscribeToComments = (postId, callback) => {
   return unsubscribe;
 };
 
+/**
+ * Updates the comment count for a specific post in the database.
+ *
+ * @param {string} postId - The ID of the post to update.
+ * @param {number} commentCount - The new comment count to set for the post.
+ * @returns {Promise<void>} A promise that resolves when the update is complete.
+ * @throws Will log an error message if the update fails.
+ */
 export const updateCommentCount = async (postId, commentCount) => {
   try {
     await update(ref(db, `posts/${postId}`), { commentCount });
@@ -583,6 +592,16 @@ export const deleteCommentById = async (commentId) => {
 };
 
   
+/**
+ * Updates the likes and dislikes count for a specific post.
+ *
+ * @param {string} postId - The ID of the post to update.
+ * @param {number} likes - The new number of likes for the post.
+ * @param {number} dislikes - The new number of dislikes for the post.
+ * @param {string} userId - The ID of the user who is voting.
+ * @param {string} type - The type of vote ('like' or 'dislike').
+ * @returns {Promise<void>} - A promise that resolves when the update is complete.
+ */
 export const updateLikesDislikes = async (postId, likes, dislikes, userId, type) => {
   try {
     const postRef = ref(db, `posts/${postId}`);
@@ -610,6 +629,13 @@ export const updateLikesDislikes = async (postId, likes, dislikes, userId, type)
 };
 
 
+/**
+ * Subscribes to changes on a specific post and invokes a callback with the post data.
+ *
+ * @param {string} postId - The ID of the post to subscribe to.
+ * @param {function} callback - The callback function to be called with the post data.
+ * @returns {function} - A function to unsubscribe from the post updates.
+ */
 export const subscribeToPost = (postId, callback) => {
   if (!postId) return () => {};
 
@@ -625,6 +651,14 @@ export const subscribeToPost = (postId, callback) => {
   return unsubscribe; 
 };
 
+/**
+ * Fetches all posts from the database.
+ *
+ * @async
+ * @function getAllPosts
+ * @returns {Promise<Array>} A promise that resolves to an array of posts. If no posts are found, an empty array is returned.
+ * @throws Will log an error message to the console if there is an issue fetching posts.
+ */
 export const getAllPosts = async () => {
   try {
     const postsRef = ref(db, "posts"); 
