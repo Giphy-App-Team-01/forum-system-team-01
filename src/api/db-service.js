@@ -624,3 +624,19 @@ export const subscribeToPost = (postId, callback) => {
 
   return unsubscribe; 
 };
+
+export const getAllPosts = async () => {
+  try {
+    const postsRef = ref(db, "posts"); 
+    const snapshot = await get(postsRef); 
+
+    if (!snapshot.exists()) {
+      return []; 
+    }
+
+    return Object.values(snapshot.val());
+  } catch (error) {
+    console.error("❌ Error fetching posts:", error);
+    return []; 
+  }
+};
