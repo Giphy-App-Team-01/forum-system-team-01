@@ -46,7 +46,8 @@ textarea.content-textarea__single-post {
   cursor: pointer;
 }
 img.author-info__single-post {
-  width: 50px;
+  width: 70px;
+  height: 70px;
   border-radius: 50px;
   border: 1px solid #cccccc75;
 }
