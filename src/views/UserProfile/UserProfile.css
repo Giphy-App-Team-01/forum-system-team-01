@@ -155,3 +155,42 @@ p {
   color: #787878;
   margin-top: 20px;
 }
+
+.profile-avatar-upload {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-avatar-upload input[type='file'] {
+  display: none;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #ffcc00;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.custom-file-upload:hover {
+  background-color: #e6b800;
+}
+
+/* Премахва стрелките в Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Премахва стрелките в Firefox */
+input[type='number'] {
+  appearance: textfield;
+}

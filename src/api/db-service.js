@@ -300,7 +300,6 @@ export const blockUser = async (userId, shouldBlock) => {
 export const updateUserData = async (userId, updatedData) => {
   try {
     await update(ref(db, `users/${userId}`), updatedData);
-    console.log(`✅ User ${userId} data updated successfully.`);
   } catch (error) {
     console.error('❌ Error updating user data:', error);
   }
