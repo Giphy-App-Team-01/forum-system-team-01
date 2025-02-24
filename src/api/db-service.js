@@ -576,6 +576,11 @@ export const subscribeToComments = (postId, callback) => {
  * @throws Will log an error message if the update fails.
  */
 export const updateCommentCount = async (postId, commentCount) => {
+
+  if (!await isExistPost(postId)) {
+    return;
+  }
+
   try {
     await update(ref(db, `posts/${postId}`), { commentCount });
   } catch (error) {
@@ -674,3 +679,23 @@ export const getAllPosts = async () => {
     return []; 
   }
 };
+
+/**
+ * Checks if a post with the given ID exists in the database.
+ *
+ * @param {string} id - The ID of the post to check.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the post exists, false otherwise.
+ */
+export const isExistPost = async (id) => {
+  if (!id) return false;
+
+  try {
+    const snapshot = await get(ref(db, `posts/${id}`));
+    return snapshot.exists();
+  } catch (error) {
+    console.error('❌ Error checking post existence:', error);
+    return false;
+  }
+};
+
+
