@@ -155,6 +155,9 @@ function PostSingleView() {
   useEffect(() => {
     if (!id) return;
   
+    let unsubscribePost = () => {};
+    let unsubscribeComments = () => {};
+  
     const checkPostAndSubscribe = async () => {
       const postExists = await isExistPost(id);
   
@@ -162,7 +165,7 @@ function PostSingleView() {
         navigate("/not-found");
         return;
       }
-
+  
       const handlePostUpdate = async (postData) => {
         const postAuthorImage = await getUserProfilePicture(postData.authorId);
         const currentUserName = await getUserData(postData.authorId);
@@ -177,19 +180,18 @@ function PostSingleView() {
         setPostContentLength(postData.content.length);
       };
   
-      const unsubscribePost = subscribeToPost(id, handlePostUpdate);
-      const unsubscribeComments = subscribeToComments(id, (comments) => {
-        setPostComments(comments);
-      });
-  
-      return () => {
-        unsubscribePost();
-        unsubscribeComments();
-      };
+      unsubscribePost = subscribeToPost(id, handlePostUpdate);
+      unsubscribeComments = subscribeToComments(id, setPostComments);
     };
   
     checkPostAndSubscribe();
+  
+    return () => {
+      unsubscribePost();
+      unsubscribeComments();
+    };
   }, [id, navigate]);
+  
   
 
   useEffect(() => {
@@ -204,8 +206,6 @@ function PostSingleView() {
     }
   }, [postContentValue,isEditable]);
 
-
-  console.log(postComments);
 
   return (
     postObject && (
