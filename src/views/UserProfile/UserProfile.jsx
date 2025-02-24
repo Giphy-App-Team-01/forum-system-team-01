@@ -35,6 +35,12 @@ const UserProfile = () => {
 
     const fetchUserData = async () => {
       const userData = await getUserData(id);
+
+      if (!userData) {
+        navigate('/not-found');
+        return;
+      }
+      
       if (userData) {
         setUser(userData);
         setFirstName(userData.firstName);

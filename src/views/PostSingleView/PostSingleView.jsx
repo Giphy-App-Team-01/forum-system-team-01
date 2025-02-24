@@ -11,6 +11,7 @@ import {
   deleteCommentById,
   updateLikesDislikes,
   subscribeToPost,
+  isExistPost,
 } from '../../api/db-service';
 import SingleListCommentItem from '../../components/SingleListCommentItem/SingleListCommentItem';
 import { MIN_CONTENT_CHARS, MAX_CONTENT_CHARS } from '../../common/constants';
@@ -154,30 +155,42 @@ function PostSingleView() {
   useEffect(() => {
     if (!id) return;
   
-    const handlePostUpdate = async (postData) => {
-      const postAuthorImage = await getUserProfilePicture(postData.authorId);
-      const currentUserName = await getUserData(postData.authorId);
+    const checkPostAndSubscribe = async () => {
+      const postExists = await isExistPost(id);
   
-      setPostObject(postData);
-      setPostLikes(postData.likes || 0);
-      setPostDislikes(postData.dislikes || 0);
-      setUsersVoted(postData.usersVoted || {});
-      setUserProfilePicture(postAuthorImage);
-      setCurrentUsername(currentUserName);
-      setPostContentValue(postData.content);
-      setPostContentLength(postData.content.length);
+      if (!postExists) {
+        navigate("/not-found");
+        return;
+      }
+
+      const handlePostUpdate = async (postData) => {
+        const postAuthorImage = await getUserProfilePicture(postData.authorId);
+        const currentUserName = await getUserData(postData.authorId);
+  
+        setPostObject(postData);
+        setPostLikes(postData.likes || 0);
+        setPostDislikes(postData.dislikes || 0);
+        setUsersVoted(postData.usersVoted || {});
+        setUserProfilePicture(postAuthorImage);
+        setCurrentUsername(currentUserName);
+        setPostContentValue(postData.content);
+        setPostContentLength(postData.content.length);
+      };
+  
+      const unsubscribePost = subscribeToPost(id, handlePostUpdate);
+      const unsubscribeComments = subscribeToComments(id, (comments) => {
+        setPostComments(comments);
+      });
+  
+      return () => {
+        unsubscribePost();
+        unsubscribeComments();
+      };
     };
   
-    const unsubscribePost = subscribeToPost(id, handlePostUpdate);
-    const unsubscribeComments = subscribeToComments(id, (comments) => {
-      setPostComments(comments);
-    });
+    checkPostAndSubscribe();
+  }, [id, navigate]);
   
-    return () => {
-      unsubscribePost();
-      unsubscribeComments();
-    };
-  }, [id]);
 
   useEffect(() => {
     updateCommentCount(id, postComments.length);
