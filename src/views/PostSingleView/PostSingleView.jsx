@@ -2,7 +2,6 @@ import './PostSingleView.css';
 import {
   getUserProfilePicture,
   getUserData,
-  getSinglePostDetails,
   updatePostInfo,
   deletePostById,
   updateCommentCount,
@@ -39,7 +38,7 @@ function PostSingleView() {
   const [commentContentValue, setCommentContentValue] = useState('');
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [usersVoted, setUsersVoted] = useState({});
-  const postContentRef = useRef(null); // Референция към textarea
+  const postContentRef = useRef(null); 
   const { id } = useParams();
   const { authUser, dbUser } = useContext(AppContext);
 
@@ -102,6 +101,7 @@ function PostSingleView() {
       setShowCommentForm(false);
       toast.success('Comment added successfully!');
       setCommentContentValue('');
+      updateCommentCount(id, postComments.length + 1);
     } catch (err) {
       toast.error('Error adding comment.');
       console.error('Error adding comment:', err);
@@ -146,6 +146,7 @@ function PostSingleView() {
     try {
       await deleteCommentById(commentId);
       toast.success('Comment deleted successfully!');
+      updateCommentCount(id, postComments.length - 1);
     } catch (error) {
       toast.error('Error deleting comment.');
       console.error('Error deleting comment:', error);
@@ -191,12 +192,6 @@ function PostSingleView() {
       unsubscribeComments();
     };
   }, [id, navigate]);
-  
-  
-
-  useEffect(() => {
-    updateCommentCount(id, postComments.length);
-  }, [postComments]);
 
   //Auto resize textarea height based on content length 
   useEffect(() => {
