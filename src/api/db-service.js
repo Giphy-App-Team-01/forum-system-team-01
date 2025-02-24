@@ -176,6 +176,8 @@ export const savePostToDatabase = async (userId, title, content) => {
       dislikes: 0,
       commentCount: 0,
     });
+
+    return postId
   } catch (error) {
     console.error('❌ Error saving post to database:', error);
   }
