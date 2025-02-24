@@ -1,14 +1,17 @@
 import './SingleListCommentItem.css';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { fetchDisplayNameByUserId } from '../../api/db-service';
 import { formatTimestamp } from '../../utils/utils';
 import Button from '../Button/Button';
 import './SingleListCommentItem.css';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../context/app.context';
 function SingleListCommentItem({ commentObject, onDelete }) {
   const [userName, setUserName] = useState('');
+  const {authUser, dbUser} = useContext(AppContext);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -26,9 +29,12 @@ function SingleListCommentItem({ commentObject, onDelete }) {
         <span className='comment-author' onClick={() => navigate(`/user/${commentObject.authorId}`)}>By {userName}</span>
         <span className='comment-date'>📅 {formatTimestamp(commentObject.createdAt)}</span>
       </div>
-      <Button className='delete-comment danger' onClickHandler={onDelete}>
-        Delete
-      </Button>
+      {(authUser?.uid === commentObject.authorId || dbUser?.isAdmin) && (
+        <Button className='delete-comment danger' onClickHandler={onDelete}>
+          Delete
+        </Button>
+      )}
+    
     </div>
   );
 }

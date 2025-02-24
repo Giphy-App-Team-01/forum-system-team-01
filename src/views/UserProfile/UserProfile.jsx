@@ -14,7 +14,7 @@ import Button from '../../components/Button/Button';
 
 const UserProfile = () => {
   const { userId: id } = useParams();
-  const { authUser } = useContext(AppContext);
+  const { authUser, dbUser } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
@@ -140,7 +140,7 @@ const UserProfile = () => {
           </div>
 
           {/* Buttons for blocking and promoting users (this buttons are visible only for admins and is visible only for other users profile) */}
-          {authUser?.uid !== id && (
+          {dbUser?.isAdmin && authUser?.uid !== id && (
             <div className='profile-actions'>
               <Button
                 className={

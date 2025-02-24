@@ -117,7 +117,7 @@ function PostSingleView() {
       try {
         await deletePostById(id);
         toast.success('✅ Post deleted!');
-        navigate(`/user/${authUser.uid}`);
+        navigate(`/all-posts/`);
       } catch (error) {
         toast.error('❌ Error deleting post');
         console.error('Error deleting post:', error);
@@ -267,7 +267,7 @@ function PostSingleView() {
                   Edit
                 </Button>
               )}
-              {dbUser.isAdmin && !isEditable && (
+              {(dbUser.isAdmin || authUser.uid === postObject.authorId) && !isEditable && (
                 <Button className='danger' onClickHandler={handlePostDelete}>
                   Delete
                 </Button>
