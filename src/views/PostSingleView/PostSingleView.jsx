@@ -52,43 +52,49 @@ function PostSingleView() {
 
   const handleLikesDislikesClick = (type) => {
     if (!authUser) return;
-  
+
     const userVote = usersVoted[authUser.uid]; // Takes the user's vote
-  
+
     let updatedLikes = postLikes;
     let updatedDislikes = postDislikes;
     let updatedUsersVoted = { ...usersVoted };
-  
+
     if (userVote === type) {
       // If we click on the same vote type, we remove the vote
-      if (type === "likes") {
+      if (type === 'likes') {
         updatedLikes -= 1;
-      } else if (type === "dislikes") {
+      } else if (type === 'dislikes') {
         updatedDislikes -= 1;
       }
-  
+
       delete updatedUsersVoted[authUser.uid]; // Remove the user's vote
     } else {
       // If we click on a different vote type, we update the vote
-      if (userVote === "likes") {
+      if (userVote === 'likes') {
         updatedLikes -= 1;
-      } else if (userVote === "dislikes") {
+      } else if (userVote === 'dislikes') {
         updatedDislikes -= 1;
       }
-  
-      if (type === "likes") {
+
+      if (type === 'likes') {
         updatedLikes += 1;
       } else {
         updatedDislikes += 1;
       }
-  
+
       updatedUsersVoted[authUser.uid] = type; //Save the user's vote
     }
-  
+
     setPostLikes(updatedLikes);
     setPostDislikes(updatedDislikes);
     setUsersVoted(updatedUsersVoted);
-    updateLikesDislikes(id, updatedLikes, updatedDislikes, authUser.uid, updatedUsersVoted[authUser.uid] || null);
+    updateLikesDislikes(
+      id,
+      updatedLikes,
+      updatedDislikes,
+      authUser.uid,
+      updatedUsersVoted[authUser.uid] || null
+    );
   };
 
   const handleAddNewComment = async () => {
@@ -154,22 +160,22 @@ function PostSingleView() {
 
   useEffect(() => {
     if (!id) return;
-  
+
     let unsubscribePost = () => {};
     let unsubscribeComments = () => {};
-  
+
     const checkPostAndSubscribe = async () => {
       const postExists = await isExistPost(id);
-  
+
       if (!postExists) {
-        navigate("/not-found");
+        navigate('/not-found');
         return;
       }
-  
+
       const handlePostUpdate = async (postData) => {
         const postAuthorImage = await getUserProfilePicture(postData.authorId);
         const currentUserName = await getUserData(postData.authorId);
-  
+
         setPostObject(postData);
         setPostLikes(postData.likes || 0);
         setPostDislikes(postData.dislikes || 0);
@@ -179,181 +185,186 @@ function PostSingleView() {
         setPostContentValue(postData.content);
         setPostContentLength(postData.content.length);
       };
-  
+
       unsubscribePost = subscribeToPost(id, handlePostUpdate);
       unsubscribeComments = subscribeToComments(id, setPostComments);
     };
-  
+
     checkPostAndSubscribe();
-  
+
     return () => {
       unsubscribePost();
       unsubscribeComments();
     };
   }, [id, navigate]);
-  
-  
 
   useEffect(() => {
     updateCommentCount(id, postComments.length);
   }, [postComments]);
 
-  //Auto resize textarea height based on content length 
+  //Auto resize textarea height based on content length
   useEffect(() => {
     if (postContentRef.current) {
-      postContentRef.current.style.height = "auto"; 
-      postContentRef.current.style.height = postContentRef.current.scrollHeight + "px"; 
+      postContentRef.current.style.height = 'auto';
+      postContentRef.current.style.height =
+        postContentRef.current.scrollHeight + 'px';
     }
-  }, [postContentValue,isEditable]);
-
+  }, [postContentValue, isEditable]);
 
   return (
     postObject && (
       <>
-      <div className="single-post-view-container">
-        <article className='single-post'>
-          <ToastContainer />
-          <h1>{postObject.title}</h1>
-          <div className='author-info__single-post'>
-            <div
-              className='username-info__single-post'
-              onClick={handleUsernameClick}
-            >
-              <img
-                src={userProfilePicture}
-                alt={postObject.authorId}
-                className='author-info__single-post'
-              />
-              <div className='username__single-post'>
-                {currentUsername?.username}
+        <div className='single-post-view-container'>
+          <article className='single-post'>
+            <ToastContainer />
+            <h1>{postObject.title}</h1>
+            <div className='author-info__single-post'>
+              <div
+                className='username-info__single-post'
+                onClick={handleUsernameClick}
+              >
+                <img
+                  src={userProfilePicture}
+                  alt={postObject.authorId}
+                  className='author-info__single-post'
+                />
+                <div className='username__single-post'>
+                  {currentUsername?.username}
+                </div>
               </div>
-            </div>
 
-            <div className='date-created__single-post'>
-              {formatTimestamp(postObject.createdAt)}
-            </div>
-          </div>
-          <div className='content__single-post'>
-            {isEditable && (
-              <div className='edit-post-box'>
-                <textarea
-                ref={postContentRef}
-                  className='content-textarea__single-post editable'
-                  value={postContentValue}
-                  onChange={(e) => {
-                    setPostContentValue(e.target.value);
-                    setPostContentLength(e.target.value.length);
-                  }}
-                  maxLength={MAX_CONTENT_CHARS}
-                ></textarea>
-                <span className='content-chars-length'>
-                  {postContentLength} / {MAX_CONTENT_CHARS}
-                </span>
+              <div className='date-created__single-post'>
+                {formatTimestamp(postObject.createdAt)}
               </div>
-            )}
-            {!isEditable && (
-              <textarea
-                ref={postContentRef}
-                disabled={!isEditable}
-                className='content-textarea__single-post'
-                value={postContentValue}
-              />
-            )}
-          </div>
-          <div className='controls__single-post'>
-            <div className='author-admin__controls'>
-              {authUser.uid === postObject.authorId && !isEditable && (
-                <Button className='warning' onClickHandler={handleEditClick}>
-                  Edit
-                </Button>
-              )}
-              {(dbUser.isAdmin || authUser.uid === postObject.authorId) && !isEditable && (
-                <Button className='danger' onClickHandler={handlePostDelete}>
-                  Delete
-                </Button>
-              )}
+            </div>
+            <div className='content__single-post'>
               {isEditable && (
-                <>
-                  <Button className='success' onClickHandler={handleUpdatePost}>
-                    Save Changes
-                  </Button>
-                  <Button
-                    className='danger'
-                    onClickHandler={() => {
-                      setIsEditable(false);
+                <div className='edit-post-box'>
+                  <textarea
+                    ref={postContentRef}
+                    className='content-textarea__single-post editable'
+                    value={postContentValue}
+                    onChange={(e) => {
+                      setPostContentValue(e.target.value);
+                      setPostContentLength(e.target.value.length);
                     }}
-                  >
-                    Cancel
-                  </Button>
-                </>
+                    maxLength={MAX_CONTENT_CHARS}
+                  ></textarea>
+                  <span className='content-chars-length'>
+                    {postContentLength} / {MAX_CONTENT_CHARS}
+                  </span>
+                </div>
+              )}
+              {!isEditable && (
+                <textarea
+                  ref={postContentRef}
+                  disabled={!isEditable}
+                  className='content-textarea__single-post'
+                  value={postContentValue}
+                />
               )}
             </div>
-            <div className='public__controls'>
-            <div className="vote-controls">
-                <div
-                  className={`option__vote-controls ${
-                    usersVoted[authUser?.uid] === 'likes' ? 'voted' : ''
-                  }`}
-                  onClick={() => handleLikesDislikesClick('likes')}
-                >
-                  <i className="fa-solid fa-thumbs-up"></i>
-                  <span>{postLikes}</span>
-                </div>
-
-                <div
-                  className={`option__vote-controls ${
-                    usersVoted[authUser?.uid] === 'dislikes' ? 'voted' : ''
-                  }`}
-                  onClick={() => handleLikesDislikesClick('dislikes')}
-                >
-                  <i className="fa-solid fa-thumbs-down"></i>
-                  <span>{postDislikes}</span>
-                </div>
+            <div className='controls__single-post'>
+              <div className='author-admin__controls'>
+                {authUser.uid === postObject.authorId && !isEditable && (
+                  <Button className='warning' onClickHandler={handleEditClick}>
+                    Edit
+                  </Button>
+                )}
+                {(dbUser.isAdmin || authUser.uid === postObject.authorId) &&
+                  !isEditable && (
+                    <Button
+                      className='danger'
+                      onClickHandler={handlePostDelete}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                {isEditable && (
+                  <>
+                    <Button
+                      className='success'
+                      onClickHandler={handleUpdatePost}
+                    >
+                      Save Changes
+                    </Button>
+                    <Button
+                      className='danger'
+                      onClickHandler={() => {
+                        setIsEditable(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                )}
               </div>
-              <div className='reply-button'>
-                <Button
-                  onClickHandler={() => setShowCommentForm((prev) => !prev)}
-                >
-                  Reply
-                </Button>
+              <div className='public__controls'>
+                <div className='vote-controls'>
+                  <div
+                    className={`option__vote-controls ${
+                      usersVoted[authUser?.uid] === 'likes' ? 'voted' : ''
+                    }`}
+                    onClick={() => handleLikesDislikesClick('likes')}
+                  >
+                    <i className='fa-solid fa-thumbs-up'></i>
+                    <span>{postLikes}</span>
+                  </div>
+
+                  <div
+                    className={`option__vote-controls ${
+                      usersVoted[authUser?.uid] === 'dislikes' ? 'voted' : ''
+                    }`}
+                    onClick={() => handleLikesDislikesClick('dislikes')}
+                  >
+                    <i className='fa-solid fa-thumbs-down'></i>
+                    <span>{postDislikes}</span>
+                  </div>
+                </div>
+                <div className='reply-button'>
+                  <Button
+                    onClickHandler={() => setShowCommentForm((prev) => !prev)}
+                  >
+                    Reply
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <div className='comments-section__single-post'>
-          <h3>{postComments.length} Comments</h3>
-          <div className='comments-list'>
-            {postComments.map((comment) => {
-              if (authUser.uid === comment.authorId || dbUser?.isAdmin) {
-                return (
-                  <SingleListCommentItem
-                    key={comment.commentId}
-                    commentObject={comment}
-                    onDelete={() => handleDeleteComment(comment.commentId)}
-                  />
-                );
-              } else {
-                return (
-                  <SingleListCommentItem
-                    key={comment.commentId}
-                    commentObject={comment}
-                  />
-                );
-              }
-            })}
+          <div className='comments-section__single-post'>
+            <h3>{postComments.length} Comments</h3>
+            <div className='comments-list'>
+              {postComments.map((comment) => {
+                if (authUser.uid === comment.authorId || dbUser?.isAdmin) {
+                  return (
+                    <SingleListCommentItem
+                      key={comment.commentId}
+                      commentObject={comment}
+                      onDelete={() => handleDeleteComment(comment.commentId)}
+                    />
+                  );
+                } else {
+                  return (
+                    <SingleListCommentItem
+                      key={comment.commentId}
+                      commentObject={comment}
+                    />
+                  );
+                }
+              })}
+            </div>
           </div>
-        </div>
 
-        {showCommentForm && (
-          <CommentForm
-            postTitle={postObject.title}
-            saveHandler={handleAddNewComment}
-            cancelHandler={() => setShowCommentForm(false)}
-            commentFormValue={commentContentValue}
-            commentFormOnChangeHandler={setCommentContentValue}
-          />
-        )}
+          {showCommentForm && (
+            <CommentForm
+              postTitle={postObject.title}
+              saveHandler={handleAddNewComment}
+              cancelHandler={() => setShowCommentForm(false)}
+              commentFormValue={commentContentValue}
+              commentFormOnChangeHandler={setCommentContentValue}
+            />
+          )}
         </div>
       </>
     )
