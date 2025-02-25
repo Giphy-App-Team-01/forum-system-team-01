@@ -17,13 +17,15 @@
   padding: 20px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.05);
   text-align: center;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3sease-in-out;
+  border: var(--global-default-border);
+  transition: all 0.5s;
 }
 
 .homepage-block:hover {
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0px 20px rgba(0, 0, 0, 0.1);
   transform: translateY(-4px);
 }
 
@@ -41,6 +43,7 @@
   margin-bottom: 10px;
   transition: all 0.3s ease-in-out;
   position: relative;
+  text-align: left;
 }
 
 .homepage-card:hover {

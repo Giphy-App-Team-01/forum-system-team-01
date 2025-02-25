@@ -5,6 +5,8 @@ body {
 }
 :root {
   --global-site-width: 1200px;
+  --global-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  --global-default-border: 1px solid #cccccc80;
 }
 body,
 html {

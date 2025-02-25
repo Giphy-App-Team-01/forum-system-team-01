@@ -11,6 +11,7 @@ import {
 } from '../../api/db-service';
 import './UserProfile.css';
 import Button from '../../components/Button/Button';
+import { uploadImageToCloudinary } from '../../api/upload-service';
 
 const UserProfile = () => {
   const { userId: id } = useParams();
@@ -26,6 +27,9 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('posts');
   const [sortOrder, setSortOrder] = useState('newest');
   const [searchQuery, setSearchQuery] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     if (!id) {
@@ -40,12 +44,11 @@ const UserProfile = () => {
         navigate('/not-found');
         return;
       }
-      
-      if (userData) {
-        setUser(userData);
-        setFirstName(userData.firstName);
-        setLastName(userData.lastName);
-      }
+
+      setUser(userData);
+      setFirstName(userData.firstName);
+      setLastName(userData.lastName);
+      setPhoneNumber(userData.phoneNumber || '');
 
       const userPosts = await getUserPosts(id);
       setPosts(userPosts || []);
@@ -59,10 +62,42 @@ const UserProfile = () => {
 
   const handleEdit = () => setEditing(true);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewImage(URL.createObjectURL(file)); //Create a temporary URL for the image to preview
+    }
+  };
+
   const handleSave = async () => {
-    await updateUserData(id, { firstName, lastName });
-    setUser({ ...user, firstName, lastName });
-    setEditing(false);
+    let updatedData = { firstName, lastName };
+
+    // Check if there is a new image to upload
+    if (imageFile) {
+      const newImageUrl = await uploadImageToCloudinary(imageFile);
+
+      // Compare the new image URL with the current one
+      if (newImageUrl && newImageUrl !== user.profilePicture) {
+        updatedData.profilePicture = newImageUrl;
+      }
+    }
+
+    // If the user is an admin he can add a phone number
+    if (dbUser?.isAdmin) {
+      updatedData.phoneNumber = phoneNumber || null; // if phoneNumber is empty, set it to null (remove it from the DB)
+    }
+
+    try {
+      await updateUserData(id, updatedData);
+      setUser({ ...user, ...updatedData });
+      setPreviewImage(null);
+      setImageFile(null);
+    } catch (error) {
+      console.log(`Error updating user data: ${error.message}`);
+    } finally {
+      setEditing(false);
+    }
   };
 
   const handleBlockUser = async () => {
@@ -101,12 +136,23 @@ const UserProfile = () => {
         <>
           <div className='profile-header'>
             <img
-              src={user.profilePicture || '/default-avatar.jpg'}
+              src={previewImage || user.profilePicture || '/default-avatar.jpg'}
               alt='Avatar'
               className='profile-avatar'
             />
             {editing ? (
               <>
+                <div className='profile-avatar-upload'>
+                  <label htmlFor='file-upload' className='custom-file-upload'>
+                    📸 Upload New Picture
+                  </label>
+                  <input
+                    id='file-upload'
+                    type='file'
+                    accept='image/*'
+                    onChange={(e) => handleImageChange(e)}
+                  />
+                </div>
                 <input
                   type='text'
                   value={firstName}
@@ -117,7 +163,16 @@ const UserProfile = () => {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
-                <Button className='save-button' onClickHandler={handleSave}>
+
+                {dbUser?.isAdmin && (
+                  <input
+                    type='number'
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder='Phone Number (Admins Only)'
+                  />
+                )}
+                <Button className='success' onClickHandler={handleSave}>
                   Save
                 </Button>
               </>
@@ -129,9 +184,19 @@ const UserProfile = () => {
                 <p>
                   <strong>Username:</strong> {user.username}
                 </p>
-                <p>{user.email}</p>
+                <p>
+                  <strong>Email: </strong>
+                  {user.email}
+                </p>
+                <p>
+                  {phoneNumber !== '' && (
+                    <p>
+                      <strong>Phone Number:</strong> {user.phoneNumber}
+                    </p>
+                  )}
+                </p>
                 {authUser?.uid === id && (
-                  <Button className='edit-button' onClickHandler={handleEdit}>
+                  <Button className='warning' onClickHandler={handleEdit}>
                     Edit
                   </Button>
                 )}
@@ -215,7 +280,8 @@ const UserProfile = () => {
                       📝 <strong>{comment.postTitle || 'Unknown Post'}</strong>
                     </h3>
                     <p className='comment-content'>
-                      <strong>Your comment:</strong> {comment.content.substring(0, 100)}...
+                      <strong>Your comment:</strong>{' '}
+                      {comment.content.substring(0, 100)}...
                     </p>
                   </div>
                 ))

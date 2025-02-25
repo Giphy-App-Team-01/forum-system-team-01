@@ -8,7 +8,8 @@
   padding: 40px;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--global-box-shadow);
+  border: var(--global-default-border);
   text-align: center;
 }
 

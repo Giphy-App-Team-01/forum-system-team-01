@@ -3,16 +3,11 @@
   margin: 40px auto;
   padding: 20px 40px;
   background: linear-gradient(135deg, #ffffff, #f5f7fa);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), 0 8px 20px rgba(0, 0, 0, 0.15);
   border-radius: 15px;
   text-align: center;
   color: #333;
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-.user-profile:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 10px 25px rgba(0, 0, 0, 0.18);
+  border: 1px solid #ccc;
 }
 
 .profile-header {
@@ -42,7 +37,7 @@ p {
   padding: 8px;
   font-size: 16px;
   border-radius: 6px;
-  border: 1px solid #656565;
+  border: 1px solid #ccc;
   background: #ffffff;
   color: #333;
   text-align: center;
@@ -121,15 +116,12 @@ p {
   text-align: left;
   border-left: 4px solid #ffcc00;
 
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 6px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .post-card:hover,
 .comment-card:hover {
-  transform: scale(1.02);
-
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12),
-    0px 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
 .post-card h3 {
@@ -154,4 +146,39 @@ p {
   font-size: 16px;
   color: #787878;
   margin-top: 20px;
+}
+
+.profile-avatar-upload {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-avatar-upload input[type='file'] {
+  display: none;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #222;
+  background-color: #f0a500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Премахва стрелките в Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Премахва стрелките в Firefox */
+input[type='number'] {
+  appearance: textfield;
 }

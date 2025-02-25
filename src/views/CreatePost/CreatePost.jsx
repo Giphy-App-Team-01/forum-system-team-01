@@ -34,9 +34,14 @@ const CreatePost = () => {
 
     try {
       setLoading(true);
-      await savePostToDatabase(authUser.uid, formData.title, formData.content);
-      toast.success("Post created successfully!");
+      const postId = await savePostToDatabase(authUser.uid, formData.title, formData.content);
+      toast.success("Post created successfully! You will be redirected to the post page.");
       setFormData({ title: "", content: "" });
+      setTimeout(() => {
+        navigation(`/post/${postId}`);
+      }
+      , 2000
+      );
     } catch (error) {
       toast.error("Error creating post. Try again.");
     } finally {
