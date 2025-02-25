@@ -204,10 +204,6 @@ function PostSingleView() {
     };
   }, [id, navigate]);
 
-  useEffect(() => {
-    updateCommentCount(id, postComments.length);
-  }, [postComments]);
-
   //Auto resize textarea height based on content length
   useEffect(() => {
     if (postContentRef.current) {
