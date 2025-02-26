@@ -66,7 +66,7 @@ const SearchForm = () => {
                   alt={user.username}
                   className="user-avatar"
                 />
-                <p className="user-name">{user.username}</p>
+                <p className="user-name-search">{user.username}</p>
               </Link>
             ))
           ) : (
